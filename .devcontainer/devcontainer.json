@@ -1,0 +1,14 @@
+{
+	"name": "Node.js",
+	"build": {
+		"dockerfile": "Dockerfile",
+	},
+	"settings": {},
+	"extensions": [
+		"dbaeumer.vscode-eslint",
+		"takumii.markdowntable",
+		"nobuhito.printcode",
+		"ecmel.vscode-html-css",
+		"ritwickdey.liveserver"
+	]
+}
