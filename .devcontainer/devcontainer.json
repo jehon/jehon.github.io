@@ -9,6 +9,7 @@
 		"takumii.markdowntable",
 		"nobuhito.printcode",
 		"ecmel.vscode-html-css",
-		"ritwickdey.liveserver"
+		"ritwickdey.liveserver",
+		"gruntfuggly.todo-tree"
 	]
 }
