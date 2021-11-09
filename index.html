@@ -1,7 +1,8 @@
 <head>
   <script type='module' src='x-img.js'></script>
+  <script type='module' src='x-badge.js'></script>
   <style>
-    .table {
+    .img-grid {
       width: 100%;
 
       display: flex;
@@ -9,7 +10,7 @@
       flex-wrap: wrap;
     }
 
-    .table>* {
+    .img-grid>* {
       width: 100px;
       margin: 25px;
     }
@@ -18,13 +19,22 @@
 
 <h1>Jehon</h1>
 
+<div style='display: grid'>
+  <x-badge prj='css-inherit'></x-badge><br>
+  <x-badge prj='cryptomedic'></x-badge><br>
+  <x-badge prj='dev-stack'></x-badge><br>
+  <x-badge prj='file-organizer'></x-badge><br>
+  <x-badge prj='kiosk'></x-badge><br>
+  <x-badge prj='packages' pages></x-badge><br>
+</div>
+
 <ul>
   <li><a href='/packages'>Packages</a></li>
 </ul>
 
 <div>
   <a href='README.md'>README.md</a>
-  <div class='table'>
+  <div class='img-grid'>
     <x-img src='JIRA/High.svg'></x-img>
     <x-img src='JIRA/Highest.svg'></x-img>
     <x-img src='JIRA/Low.svg'></x-img>
