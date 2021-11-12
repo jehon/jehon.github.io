@@ -36,8 +36,8 @@ class XBadge extends HTMLElement {
             </style>
             <div id=root>
                 <a href='https://github.com/jehon/${prj}'>${prj}</a>
-                <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg'>
-                <a href='https://github.com/jehon/${prj}/actions'>actions</a>
+                <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main'>
+                <a href='https://github.com/jehon/${prj}/actions/workflows/test.yml'>actions</a>
                 <a href='https://github.com/jehon/${prj}/pulls'>pullrequets</a>
             </div>
         `;
