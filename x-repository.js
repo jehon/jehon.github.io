@@ -1,5 +1,7 @@
 
-class XBadge extends HTMLElement {
+//   https://api.github.com/repos/octocat/hello-world/pulls
+
+class XRepository extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -44,4 +46,4 @@ class XBadge extends HTMLElement {
     }
 }
 
-customElements.define('x-badge', XBadge);
+customElements.define('x-repository', XRepository);
