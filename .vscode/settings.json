@@ -9,5 +9,6 @@
         "xdescribe",
         "[ ]",
         "[x]"
-    ]
+    ],
+    "editor.formatOnSave": true
 }

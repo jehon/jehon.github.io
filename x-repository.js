@@ -2,28 +2,25 @@
 //   https://api.github.com/repos/octocat/hello-world/pulls
 
 class XRepository extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
+    static get tag() {
+        return "x-repository";
     }
 
     connectedCallback() {
         const prj = this.getAttribute('prj');
         const withPages = this.hasAttribute('pages');
 
-        this.shadowRoot.innerHTML = `
+        this.innerHTML = `
             <style>
-                :host(*) {
-                    display: block;
-                }
-
-                div#root {
+                ${this.constructor.tag} {
                     display: flex;
                     flex-direction: row;
                     flex-grow: 1;
+
+                    width: 100%;
                 }
 
-                div#root > * {
+                ${this.constructor.tag} > * {
                     flex-basis: 200px;
                     flex-grow: 0;
                     flex-shrink: 0;
@@ -31,19 +28,17 @@ class XRepository extends HTMLElement {
                     margin: 20px;
                 }
 
-                img {
+                ${this.constructor.tag} img {
                     height: 25px;
                 }
 
             </style>
-            <div id=root>
-                <a href='https://github.com/jehon/${prj}'>${prj}</a>
-                <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main'>
-                <a href='https://github.com/jehon/${prj}/actions/workflows/test.yml'>actions</a>
-                <a href='https://github.com/jehon/${prj}/pulls'>pullrequets</a>
-            </div>
+            <a href='https://github.com/jehon/${prj}'>${prj}</a>
+            <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main'>
+            <a href='https://github.com/jehon/${prj}/actions/workflows/test.yml'>actions</a>
+            <a href='https://github.com/jehon/${prj}/pulls'>pullrequets</a>
         `;
     }
 }
 
-customElements.define('x-repository', XRepository);
+customElements.define(XRepository.tag, XRepository);
