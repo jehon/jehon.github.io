@@ -1,6 +1,4 @@
 
-//   https://api.github.com/repos/octocat/hello-world/pulls
-
 class XRepository extends HTMLElement {
     static get tag() {
         return "x-repository";
@@ -60,6 +58,7 @@ class XRepository extends HTMLElement {
                             <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main'>
                         </div>
                         <div id='pr'></div>
+                        <div id='branches'></div>
                         <div id='actions'>
                             <a href="https://github.com/jehon/${prj}/pulls" class="btn btn-primary">Pull requests</a>
                             <a href="https://github.com/jehon/${prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
@@ -75,15 +74,32 @@ class XRepository extends HTMLElement {
         const prEl = this.querySelector('#pr');
         prEl.innerHTML = '';
 
-        fetch(`https://api.github.com/repos/jehon/${prj}/pulls`)
-            .then(resp => resp.json())
-            .then(data =>
-                data.map(pr => {
-                    // console.log(pr.html_url, pr.title, pr.user.login);
-                    prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a></div>`;
+        const branchesEl = this.querySelector('#branches');
+        branchesEl.innerHTML = '';
 
+        const rootAPI = `https://api.github.com/repos/jehon/${prj}`;
+
+        fetch(`${rootAPI}/pulls`)
+            .then(resp => resp.json())
+            .then(data => {
+                data.map(pr => {
+                    // console.log(pr);
+                    prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a></div>`;
                 })
-            )
+                return data;
+            })
+            .then(data => data.map(pr => pr.head.ref))
+            .then(branchesInPr => {
+                // console.log(branchesInPr);
+                fetch(`${rootAPI}/branches`)
+                    .then(resp => resp.json())
+                    .then(data => data.map(br => br.name))
+                    .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
+                    .then(branches => branches.map(br => {
+                        // console.log(branches);
+                        branchesEl.innerHTML += `<div>${br}</div>`
+                    }));
+            })
     }
 }
 
