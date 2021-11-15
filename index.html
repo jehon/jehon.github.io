@@ -35,13 +35,19 @@
 </nav>
 
 <div style='display: grid'>
-  <x-repository prj='css-inherit'></x-repository><br>
-  <x-repository prj='cryptomedic'></x-repository><br>
-  <x-repository prj='file-organizer'></x-repository><br>
-  <x-repository prj='kiosk'></x-repository><br>
-  <x-repository prj='packages' pages></x-repository><br>
+  <x-repository prj='css-inherit'></x-repository>
+  <x-repository prj='cryptomedic'>
+    <a class="btn btn-info" href='http://localhost:5080' port=5080>Dev server</a>
+    <a class="btn btn-info" href='http://localhost:5080/xappx' port=5080>Dev data</a>
+    <a class="btn btn-warning" href='www.cryptomedic.org'>Live server</a>
+  </x-repository>
+  <x-repository prj='file-organizer'></x-repository>
+  <x-repository prj='kiosk'></x-repository>
+  <x-repository prj='packages' pages>
+    <a class="btn btn-info" href='http://localhost:9000' port=9000>Dev stack</a>
+    <a class="btn btn-warning" href="https://jehon.github.io/${prj}">Github pages</a>
+  </x-repository>
 </div>
-
 
 <div>
   <div class='img-grid'>
