@@ -120,12 +120,24 @@ class XRepository extends HTMLElement {
                     }));
             })
 
-        Array.from(this.querySelectorAll('[port]')).map(
-            el => {
-                const port = el.getAttribute('port');
-                console.log(el, port);
-            }
-        )
+        // Problem: CORS
+
+        // Array.from(this.querySelectorAll('[watch]')).map(
+        //     el => {
+        //         const url = el.getAttribute('href');
+        //         console.log(el, url);
+
+        //         const controller = new AbortController()
+        //         const timeoutId = setTimeout(() => {
+        //             controller.abort();
+        //             console.log("Failure: ", url);
+        //         }, 5000)
+        //         fetch(url, { signal: controller.signal }).then(response => {
+        //             console.log("Success: ", url);
+        //             clearTimeout(timeoutId);
+        //         })
+        //     }
+        // )
     }
 }
 
