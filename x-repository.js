@@ -35,6 +35,16 @@ class XRepository extends HTMLElement {
                     padding-right: 10px;
                 }
 
+                ${this.constructor.tag} div.card-text > #badge {
+                    width: 200px;
+                    text-align: center;
+                }
+
+                ${this.constructor.tag} div.card-text > #actions {
+                    flex-grow: 1000;
+                    text-align: right;
+                }
+
                 ${this.constructor.tag} img {
                     height: 25px;
                 }
@@ -46,27 +56,34 @@ class XRepository extends HTMLElement {
                 </div>
                 <div class="card-body">
                     <div class="card-text">
-                        <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main'>
+                        <div id='badge'>    
+                            <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main'>
+                        </div>
                         <div id='pr'></div>
+                        <div id='actions'>
+                            <a href="https://github.com/jehon/${prj}/pulls" class="btn btn-primary">Pull requests</a>
+                            <a href="https://github.com/jehon/${prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
+                            ${withPages
+                ? `<a href="https://jehon.github.io/${prj}" class="btn btn-secondary">Page</a>`
+                : ''}
+                        </div>
                     </div>
-                    <a href="https://github.com/jehon/${prj}/pulls" class="btn btn-primary">Pull requests</a>
-                    <a href="https://github.com/jehon/${prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
                 </div>
-            </div>
-        `;
+            </div >
+    `;
 
         const prEl = this.querySelector('#pr');
-        console.log(prj, prEl)
         prEl.innerHTML = '';
 
         fetch(`https://api.github.com/repos/jehon/${prj}/pulls`)
             .then(resp => resp.json())
-            .then(data => data.map(pr => {
-                // console.log(pr)
-                console.log(pr.html_url, pr.title, pr.user.login);
-                prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.title ?? ''} (${pr.user?.login ?? ''})</a></div>`;
+            .then(data =>
+                data.map(pr => {
+                    // console.log(pr.html_url, pr.title, pr.user.login);
+                    prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a></div>`;
 
-            }))
+                })
+            )
     }
 }
 
