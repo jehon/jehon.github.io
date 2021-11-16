@@ -53,12 +53,16 @@
 
 <h3>Setup</h3>
 <table style='width: 100%'>
-  <tr><td>Linux</td><td>curl -fsSL https://raw.githubusercontent.com/jehon/packages/master/start | sudo bash -E -</td></tr>
+  <tr>
+    <td>Linux</td>
+    <td>curl -fsSL https://raw.githubusercontent.com/jehon/packages/main/start | sudo bash -E -</td>
+    <td><a href='https://github.com/jehon/packages/edit/main/start'>(edit)</a></td>
+  </tr>
   <tr><td>Windows</td>
     <td>
-        <a href='https://raw.githubusercontent.com/jehon/windows/main/start.ps1'>https://raw.githubusercontent.com/jehon/windows/main/start.ps1</a>
-        <a href='https://github.com/jehon/windows/edit/main/start.ps1'>(edit)</a>
+        Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/jehon/windows/main/start.ps1'))
     </td>
+    <td><a href='https://github.com/jehon/windows/edit/main/start.ps1'>(edit)</a></td>
   </tr>
 </table>
 
