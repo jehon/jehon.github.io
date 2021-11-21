@@ -73,7 +73,7 @@ class XRepository extends HTMLElement {
                 <div class="card-body">
                     <div class="card-text">
                         <div id='badge'>    
-                            <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main'>
+                            <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main' onerror="this.style.display='none'">
                         </div>
                         <div id='pr'></div>
                         <div id='branches'></div>
