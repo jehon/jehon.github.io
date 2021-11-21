@@ -28,7 +28,8 @@
 
 <nav class="navbar navbar-light" style='background-color: lightgray'>
   <div class="container-fluid justify-content-star">
-    <a class="nav-link" aria-current="page" href="https://jehon.atlassian.net/secure/RapidBoard.jspa?rapidView=1&projectKey=ANY">JIRA</a>
+    <a class="nav-link" aria-current="page"
+      href="https://jehon.atlassian.net/secure/RapidBoard.jspa?rapidView=1&projectKey=ANY">JIRA</a>
     <a class="nav-link" aria-current="page" href="https://github.com/jehon?tab=repositories">Repositories</a>
     <a class="nav-link" aria-current="page" href="https://github.com/pulls?q=is%3Apr+is%3Aopen+user%3Ajehon">PR</a>
     <a href='README.md'>README.md</a>
@@ -44,11 +45,13 @@
     <a class="btn btn-warning" href='www.cryptomedic.org'>Live server</a>
   </x-repository>
   <x-repository prj='file-organizer'></x-repository>
+  <x-repository prj='jehon.github.io' no-badge></x-repository>
   <x-repository prj='kiosk'></x-repository>
   <x-repository prj='packages' pages>
     <a class="btn btn-info" href='http://localhost:9000' watch>Dev stack</a>
     <a class="btn btn-warning" href="https://jehon.github.io/${prj}">Github pages</a>
   </x-repository>
+  <x-repository prj='windows' no-badge></x-repository>
 </div>
 
 <h3>Setup</h3>
@@ -58,9 +61,11 @@
     <td>curl -fsSL https://raw.githubusercontent.com/jehon/packages/main/start | sudo bash -E -</td>
     <td><a href='https://github.com/jehon/packages/edit/main/start'>(edit)</a></td>
   </tr>
-  <tr><td>Windows</td>
+  <tr>
+    <td>Windows</td>
     <td>
-        Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/jehon/windows/main/start.ps1'))
+      Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object
+      System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/jehon/windows/main/start.ps1'))
     </td>
     <td><a href='https://github.com/jehon/windows/edit/main/start.ps1'>(edit)</a></td>
   </tr>
