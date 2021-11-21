@@ -1,6 +1,10 @@
 {
     "recommendations": [
         "ritwickdey.liveserver",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "takumii.markdowntable",
+        "nobuhito.printcode",
+        "ecmel.vscode-html-css",
+        "gruntfuggly.todo-tree"
     ]
 }
