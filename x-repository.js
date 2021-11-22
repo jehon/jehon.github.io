@@ -100,6 +100,7 @@ class XRepository extends HTMLElement {
 
         fetch(`${rootAPI}/pulls`)
             .then(resp => resp.json())
+            .then(data => Array.isArray(data) ? data : [])
             .then(data => {
                 data.map(pr => {
                     // console.log(pr);
@@ -112,6 +113,7 @@ class XRepository extends HTMLElement {
                 // console.log(branchesInPr);
                 fetch(`${rootAPI}/branches`)
                     .then(resp => resp.json())
+                    .then(data => Array.isArray(data) ? data : [])
                     .then(data => data.map(br => br.name))
                     .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
                     .then(branches => branches.map(br => {
