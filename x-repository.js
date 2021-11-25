@@ -1,7 +1,45 @@
 
+import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
+import { throttling } from "https://cdn.skypack.dev/@octokit/plugin-throttling";
+import { retry } from "https://cdn.skypack.dev/@octokit/plugin-retry";
+
+//
+// https://docs.github.com/en/rest/reference/repos#statuses
+// https://serene-nightingale-a870d8.netlify.app/
+//
+
+const octokit = new (Octokit.plugin(throttling).plugin(retry))
+    ({
+        throttle: {
+            onRateLimit: (retryAfter, options) => {
+                octokit.log.warn(
+                    `Request quota exhausted for request ${options.method} ${options.url}`
+                );
+
+                if (options.request.retryCount === 0) {
+                    // only retries once
+                    octokit.log.info(`Retrying after ${retryAfter} seconds!`);
+                    return true;
+                }
+            },
+            onAbuseLimit: (retryAfter, options) => {
+                // does not retry, only logs a warning
+                octokit.log.warn(
+                    `Abuse detected for request ${options.method} ${options.url}`
+                );
+            }
+        },
+        userAgent: "jehon personal dashboard",
+    })
+
+
 class XRepository extends HTMLElement {
     static get tag() {
         return "x-repository";
+    }
+
+    #defaults = {
+        owner: "jehon"
     }
 
     constructor() {
@@ -11,6 +49,10 @@ class XRepository extends HTMLElement {
 
     connectedCallback() {
         const prj = this.getAttribute('prj');
+        this.#defaults = {
+            owner: "jehon",
+            repo: prj
+        }
 
         this.shadowRoot.innerHTML = `
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -96,14 +138,37 @@ class XRepository extends HTMLElement {
         const branchesEl = this.shadowRoot.querySelector('#branches');
         branchesEl.innerHTML = '';
 
-        const rootAPI = `https://api.github.com/repos/jehon/${prj}`;
-
-        fetch(`${rootAPI}/pulls`)
-            .then(resp => resp.json())
-            .then(data => Array.isArray(data) ? data : [])
+        octokit.pulls.list({
+            ...this.#defaults
+        })
+            // .then(data => Array.isArray(data) ? data : [])
+            .then(result => result.data)
             .then(data => {
                 data.map(pr => {
-                    // console.log(pr);
+                    console.log(pr);
+
+
+                    // https://api.github.com/repos/jehon/kiosk/pulls/620/commits
+                    // => parents.0.url => + /status
+                    // => https://api.github.com/repos/jehon/kiosk/commits/771b2184adaf85853901515bf1edb2875df3ab11/status
+                    //   => .status
+
+                    // cryptomedic.811:
+                    //                     head.sha
+                    //                     722fe1ebb17c61ac0b09e4ea5a2740f340728a85
+
+                    // https://api.github.com/repos/jehon/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
+
+                    // https://api.github.com/repos/:owner/:repo/commits/:ref/statuses
+
+                    // Thanks to: https://stackoverflow.com/a/29449704/1954789 
+                    // https://api.github.com/repos/jehon/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/statuses
+                    // https://api.github.com/repos/jehon/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
+
+                    // Ref: https://docs.github.com/en/rest/reference/repos#statuses
+                    //   status => agglomerated
+                    //   statuses => what ? protected ?
+
                     prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a></div>`;
                 })
                 return data;
@@ -111,9 +176,9 @@ class XRepository extends HTMLElement {
             .then(data => data.map(pr => pr.head.ref))
             .then(branchesInPr => {
                 // console.log(branchesInPr);
-                fetch(`${rootAPI}/branches`)
-                    .then(resp => resp.json())
-                    .then(data => Array.isArray(data) ? data : [])
+                octokit.request('GET /repos/{owner}/{repo}/branches')
+                    .then(result => result.data)
+                    // .then(data => Array.isArray(data) ? data : [])
                     .then(data => data.map(br => br.name))
                     .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
                     .then(branches => branches.map(br => {
