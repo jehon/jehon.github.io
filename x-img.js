@@ -6,7 +6,10 @@ class XImg extends HTMLElement {
     }
 
     connectedCallback() {
-        const src = this.getAttribute('src');
+        const link = this.getAttribute('link');
+        const src = this.getAttribute('src') ?? `${link}/icon.svg`;
+        const legend = this.getAttribute('legend') ?? link ?? src;
+
         this.shadowRoot.innerHTML = `
             <style>
                 :host() {
@@ -14,25 +17,25 @@ class XImg extends HTMLElement {
                     height: 100%;
                 }
 
-                div {
+                a {
                     height: 100%;
                     display: flex;
                     flex-direction: column;
                 }
 
-                div > img {
+                a > img {
                     flex-grow: 1;
                 }
 
-                div > legend {
+                a > legend {
                     width: 100%;
                     text-align: center;
                 }
             </style>
-            <div>
+            <a href='${link}'>
                 <img src='${src}'>
-                <legend>${src}</legend>
-            </div>
+                <legend>${legend}</legend>
+            </a>
         `;
     }
 }
