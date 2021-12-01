@@ -1,0 +1,100 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <style>
+        legend {
+            width: 120px;
+            display: inline-block;
+        }
+    </style>
+    <table>
+        <tr>
+            <td>
+                <canvas id=qr></canvas>
+            </td>
+            <td>
+                <form id='data'>
+                    <legend>Nom</legend><input name='name'><br>
+                    <legend>Compte</legend><input name='account'><br>
+                    <legend>Montant</legend><input name='amount' type='number'><br>
+                    <legend>freeCom</legend><input name='freeCom'><br>
+                    <legend>structuredCom</legend><input name='structuredCom' pattern='[0-9]{3}/[0-9]{5}/[0-9]{4}'><br>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <div>
+        <button onclick="fill('cocoricoop')">Cocoricoop</button>
+    </div>
+
+    <script type='module'>
+        import QRCode from 'https://cdn.skypack.dev/qrcode';
+
+        const opts = {
+            cocoricoop: {
+                name: 'cocoricoop',
+                account: 'BE05 1030 5584 3675',
+                structuredCom: '211/10'
+            },
+            KDM_France: {
+                name: 'KDM France',
+                account: 'FR7616807001380381902780674',
+                amount: '0',
+                unstructuredCom: 'solde'
+            }
+        }
+
+        function generateQR() {
+            data = {
+                ...Object.fromEntries((new FormData(document.querySelector('form#data'))).entries()),
+                name: '',
+                account: '',
+                amount: '0',
+                freeCom: '',
+                structuredCom: ''
+            };
+
+            QRCode.toCanvas(document.getElementById('qr'), [
+                'BCD', // Service tag (const)
+                '002', // Version
+                "1", // Encoding = UTF8
+                'SCT', // Identification code (const)
+                '',  // BIC (opt)
+                data.name, // Name
+                data.account, // IBAN
+                'EUR' + data.amount,
+                '', // Purpose (opt)
+                data.freeCom, // Unstructured com (opt)
+                data.structuredCom // Structured com (opt)
+            ].join('\n')
+                , function (error) {
+                    if (error) {
+                        console.error(error)
+                    }
+                })
+        }
+
+        function fill(name) {
+            const opt = opts[name];
+            Object.keys(opt).forEach(
+                k => document.querySelector(`input[name="${k}"`).value = opt[k]
+            )
+            if (opts.struct) {
+
+            }
+            generateQR();
+        }
+        window.fill = fill;
+
+        document.querySelectorAll('input').forEach(el => el.addEventListener('change', () => generateQR()));
+
+        fill('cocoricoop');
+    </script>
+</body>
+
+</html>
