@@ -7,30 +7,31 @@ import { retry } from "https://cdn.skypack.dev/@octokit/plugin-retry";
 // https://docs.github.com/en/rest/reference/repos#statuses
 // https://serene-nightingale-a870d8.netlify.app/
 //
+// https://github.com/octokit/auth-app.js#usage-with-octokit
+//
 
-const octokit = new (Octokit.plugin(throttling).plugin(retry))
-    ({
-        throttle: {
-            onRateLimit: (retryAfter, options) => {
-                octokit.log.warn(
-                    `Request quota exhausted for request ${options.method} ${options.url}`
-                );
+const octokit = new (Octokit.plugin(throttling).plugin(retry))({
+    throttle: {
+        onRateLimit: (retryAfter, options) => {
+            octokit.log.warn(
+                `Request quota exhausted for request ${options.method} ${options.url}`
+            );
 
-                if (options.request.retryCount === 0) {
-                    // only retries once
-                    octokit.log.info(`Retrying after ${retryAfter} seconds!`);
-                    return true;
-                }
-            },
-            onAbuseLimit: (retryAfter, options) => {
-                // does not retry, only logs a warning
-                octokit.log.warn(
-                    `Abuse detected for request ${options.method} ${options.url}`
-                );
+            if (options.request.retryCount === 0) {
+                // only retries once
+                octokit.log.info(`Retrying after ${retryAfter} seconds!`);
+                return true;
             }
         },
-        userAgent: "jehon personal dashboard",
-    })
+        onAbuseLimit: (retryAfter, options) => {
+            // does not retry, only logs a warning
+            octokit.log.warn(
+                `Abuse detected for request ${options.method} ${options.url}`
+            );
+        }
+    },
+    userAgent: "jehon personal dashboard",
+})
 
 
 class XRepository extends HTMLElement {
