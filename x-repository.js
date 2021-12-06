@@ -38,21 +38,20 @@ class XRepository extends HTMLElement {
         return "x-repository";
     }
 
-    #defaults = {
-        owner: "jehon"
-    }
+    /** @type {string} the repository*/
+    owner;
+
+    /** @type {string} the repository*/
+    prj;
 
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' })
+        this.attachShadow({ mode: 'open' });
     }
 
     connectedCallback() {
-        const prj = this.getAttribute('prj');
-        this.#defaults = {
-            owner: "jehon",
-            repo: prj
-        }
+        this.prj = this.getAttribute('prj');
+        this.owner = "jehon";
 
         this.shadowRoot.innerHTML = `
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -110,12 +109,12 @@ class XRepository extends HTMLElement {
             </style>
             <div class="card">
                 <div class="card-header">
-                    <a class="card-link" href='https://github.com/jehon/${prj}'>${prj}</a>
+                    <a class="card-link" href='https://github.com/${this.owner}/${this.prj}'>${this.prj}</a>
                 </div>
                 <div class="card-body">
                     <div class="card-text">
                         <div id='badge'>    
-                            <img src='https://github.com/jehon/${prj}/actions/workflows/test.yml/badge.svg?branch=main' onerror="this.style.display='none'">
+                            <img src='https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml/badge.svg?branch=main' onerror="this.style.display='none'">
                         </div>
                         <div id='pr'></div>
                         <div id='branches'></div>
@@ -124,8 +123,8 @@ class XRepository extends HTMLElement {
                             <slot></slot>
                         </div>
                         <div id='actions'>
-                            <a href="https://github.com/jehon/${prj}/pulls" class="btn btn-primary">Pull requests</a>
-                            <a href="https://github.com/jehon/${prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
+                            <a href="https://github.com/${this.owner}/${this.prj}/pulls" class="btn btn-primary">Pull requests</a>
+                            <a href="https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
                         </div>
                     </div>
                 </div>
@@ -139,7 +138,8 @@ class XRepository extends HTMLElement {
         branchesEl.innerHTML = '';
 
         octokit.pulls.list({
-            ...this.#defaults
+            owner: this.owner,
+            repo: this.prj
         })
             // .then(data => Array.isArray(data) ? data : [])
             .then(result => result.data)
@@ -148,22 +148,22 @@ class XRepository extends HTMLElement {
                     console.log(pr);
 
 
-                    // https://api.github.com/repos/jehon/kiosk/pulls/620/commits
+                    // https://api.github.com/repos/${this.owner}/kiosk/pulls/620/commits
                     // => parents.0.url => + /status
-                    // => https://api.github.com/repos/jehon/kiosk/commits/771b2184adaf85853901515bf1edb2875df3ab11/status
+                    // => https://api.github.com/repos/${this.owner}/kiosk/commits/771b2184adaf85853901515bf1edb2875df3ab11/status
                     //   => .status
 
                     // cryptomedic.811:
                     //                     head.sha
                     //                     722fe1ebb17c61ac0b09e4ea5a2740f340728a85
 
-                    // https://api.github.com/repos/jehon/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
+                    // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
 
                     // https://api.github.com/repos/:owner/:repo/commits/:ref/statuses
 
                     // Thanks to: https://stackoverflow.com/a/29449704/1954789 
-                    // https://api.github.com/repos/jehon/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/statuses
-                    // https://api.github.com/repos/jehon/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
+                    // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/statuses
+                    // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
 
                     // Ref: https://docs.github.com/en/rest/reference/repos#statuses
                     //   status => agglomerated
@@ -176,7 +176,10 @@ class XRepository extends HTMLElement {
             .then(data => data.map(pr => pr.head.ref))
             .then(branchesInPr => {
                 // console.log(branchesInPr);
-                octokit.request('GET /repos/{owner}/{repo}/branches')
+                octokit.request('GET /repos/{owner}/{repo}/branches', {
+                    owner: this.owner,
+                    repo: this.prj
+                })
                     .then(result => result.data)
                     // .then(data => Array.isArray(data) ? data : [])
                     .then(data => data.map(br => br.name))
