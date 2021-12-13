@@ -7,8 +7,8 @@ class XImg extends HTMLElement {
 
     connectedCallback() {
         const link = this.getAttribute('link');
-        const src = this.getAttribute('src') ?? `${link}/icon.svg`;
-        const legend = this.getAttribute('legend') ?? link ?? src;
+        const img = this.getAttribute('src') ?? `${link}/icon.svg`;
+        const legend = this.getAttribute('legend') ?? link ?? img;
 
         this.shadowRoot.innerHTML = `
             <style>
@@ -33,7 +33,7 @@ class XImg extends HTMLElement {
                 }
             </style>
             <a href='${link}'>
-                <img src='${src}'>
+                <img src='${img}'>
                 <legend>${legend}</legend>
             </a>
         `;
