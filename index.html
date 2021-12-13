@@ -1,4 +1,8 @@
+<!DOCTYPE html>
+<html>
+
 <head>
+  <title>Dev center</title>
   <link rel="icon" type="image/png" href="github.svg" />
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -8,8 +12,8 @@
     crossorigin="anonymous"></script>
 
 
-  <script type='module' src='x-repository.js'></script>
-  <script type='module' src='x-img.js'></script>
+  <script type="module" src="x-repository.js"></script>
+  <script type="module" src="x-img.js"></script>
   <style>
     .img-grid {
       width: 100%;
@@ -26,62 +30,66 @@
   </style>
 </head>
 
-<nav class="navbar navbar-light" style='background-color: lightgray'>
-  <div class="container-fluid justify-content-star">
-    <a class="nav-link" aria-current="page"
-      href="https://jehon.atlassian.net/secure/RapidBoard.jspa?rapidView=1&projectKey=ANY">JIRA</a>
-    <a class="nav-link" aria-current="page" href="https://github.com/jehon?tab=repositories">Repositories</a>
-    <a class="nav-link" aria-current="page" href="https://github.com/pulls?q=is%3Apr+is%3Aopen+user%3Ajehon">PR</a>
-    <a href='README.md'>README.md</a>
-    <a href='https://github.com/jehon/jehon.github.io/edit/main/index.html'>Edit</a>
+<body>
+  <nav class="navbar navbar-light" style="background-color: lightgray">
+    <div class="container-fluid justify-content-star">
+      <a class="nav-link" aria-current="page"
+        href="https://jehon.atlassian.net/secure/RapidBoard.jspa?rapidView=1&projectKey=ANY">JIRA</a>
+      <a class="nav-link" aria-current="page" href="https://github.com/jehon?tab=repositories">Repositories</a>
+      <a class="nav-link" aria-current="page" href="https://github.com/pulls?q=is%3Apr+is%3Aopen+user%3Ajehon">PR</a>
+      <a href="README.md">README.md</a>
+      <a href="https://github.com/jehon/jehon.github.io/edit/main/index.html">Edit</a>
+    </div>
+  </nav>
+
+  <div class="img-grid">
+    <x-img link="qrcode"></x-img>
   </div>
-</nav>
 
-<div class='img-grid'>
-  <x-img link='qrcode'></x-img>
-</div>
+  <div style="display: grid">
+    <x-repository prj="css-inherit"></x-repository>
+    <x-repository prj="cryptomedic">
+      <a class="btn btn-info" href="http://localhost:5080" watch>Dev server</a>
+      <a class="btn btn-info" href="http://localhost:5080/xappx" watch>Dev data</a>
+      <a class="btn btn-warning" href="http://www.cryptomedic.org">Live server</a>
+    </x-repository>
+    <x-repository prj="file-organizer"></x-repository>
+    <x-repository prj="jehon.github.io" no-badge></x-repository>
+    <x-repository prj="kiosk"></x-repository>
+    <x-repository prj="packages" pages>
+      <a class="btn btn-info" href="http://localhost:9000" watch>Dev stack</a>
+      <a class="btn btn-warning" href="https://jehon.github.io/packages">Github pages</a>
+    </x-repository>
+    <x-repository prj="windows" no-badge></x-repository>
+  </div>
 
-<div style='display: grid'>
-  <x-repository prj='css-inherit'></x-repository>
-  <x-repository prj='cryptomedic'>
-    <a class="btn btn-info" href='http://localhost:5080' watch>Dev server</a>
-    <a class="btn btn-info" href='http://localhost:5080/xappx' watch>Dev data</a>
-    <a class="btn btn-warning" href='http://www.cryptomedic.org'>Live server</a>
-  </x-repository>
-  <x-repository prj='file-organizer'></x-repository>
-  <x-repository prj='jehon.github.io' no-badge></x-repository>
-  <x-repository prj='kiosk'></x-repository>
-  <x-repository prj='packages' pages>
-    <a class="btn btn-info" href='http://localhost:9000' watch>Dev stack</a>
-    <a class="btn btn-warning" href="https://jehon.github.io/packages">Github pages</a>
-  </x-repository>
-  <x-repository prj='windows' no-badge></x-repository>
-</div>
+  <h3>Setup</h3>
+  <table style="width: 100%">
+    <tr>
+      <td>Linux</td>
+      <td>curl -fsSL https://raw.githubusercontent.com/jehon/packages/main/start | sudo bash -E -</td>
+      <td><a href="https://github.com/jehon/packages/edit/main/start">(edit)</a></td>
+    </tr>
+    <tr>
+      <td>Windows</td>
+      <td>
+        Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object
+        System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/jehon/windows/main/start.ps1'))
+      </td>
+      <td><a href="https://github.com/jehon/windows/edit/main/start.ps1">(edit)</a></td>
+    </tr>
+  </table>
 
-<h3>Setup</h3>
-<table style='width: 100%'>
-  <tr>
-    <td>Linux</td>
-    <td>curl -fsSL https://raw.githubusercontent.com/jehon/packages/main/start | sudo bash -E -</td>
-    <td><a href='https://github.com/jehon/packages/edit/main/start'>(edit)</a></td>
-  </tr>
-  <tr>
-    <td>Windows</td>
-    <td>
-      Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object
-      System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/jehon/windows/main/start.ps1'))
-    </td>
-    <td><a href='https://github.com/jehon/windows/edit/main/start.ps1'>(edit)</a></td>
-  </tr>
-</table>
+  <h3>Images locales</h3>
+  <div class="img-grid">
+    <x-img src="JIRA/High.svg"></x-img>
+    <x-img src="JIRA/Highest.svg"></x-img>
+    <x-img src="JIRA/Low.svg"></x-img>
+    <x-img src="JIRA/Lowest.svg"></x-img>
+    <x-img src="JIRA/Medium.svg"></x-img>
+    <x-img src="JIRA/envisionning.png"></x-img>
+    <x-img src="JIRA/gathering.png"></x-img>
+  </div>
+</body>
 
-<h3>Images locales</h3>
-<div class='img-grid'>
-  <x-img src='JIRA/High.svg'></x-img>
-  <x-img src='JIRA/Highest.svg'></x-img>
-  <x-img src='JIRA/Low.svg'></x-img>
-  <x-img src='JIRA/Lowest.svg'></x-img>
-  <x-img src='JIRA/Medium.svg'></x-img>
-  <x-img src='JIRA/envisionning.png'></x-img>
-  <x-img src='JIRA/gathering.png'></x-img>
-</div>
+</html>
