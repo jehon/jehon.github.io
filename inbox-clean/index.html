@@ -4,11 +4,26 @@
 <head>
     <title>Clean inbox</title>
     <link rel="icon" type="image/png" href="/github.svg" />
+    <style>
+        #log>div {
+            margin-bottom: 5px;
+            padding-left: 5px;
+            border-left: 1px solid blue;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Clean inbox</h1>
+    <div id="user"></div>
+
+    <!--Add buttons to initiate auth sequence and sign out-->
+    <button id="gapi-authorize" style="display: none;">Authorize</button>
+    <button id="gapi-signout" style="display: none;">Sign Out</button>
+
     <div id="log"></div>
+
+    <script src="https://apis.google.com/js/api.js"></script>
     <script src="main.js" type="module"></script>
 </body>
 
