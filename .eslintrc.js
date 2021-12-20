@@ -4,6 +4,7 @@ module.exports = {
     extends: [
         'eslint:recommended'
     ],
+    sourceType: 'module',
     env: {
         es6: true,
         browser: true
