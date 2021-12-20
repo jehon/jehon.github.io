@@ -20,6 +20,9 @@ const SCOPES = 'https://www.googleapis.com/auth/gmail.modify';
 const logElement = document.querySelector('#log');
 const authorizeButton = document.querySelector('button#gapi-authorize');
 const signoutButton = document.querySelector('button#gapi-signout');
+const userElement = document.querySelector('#user');
+const nbMessagesElement = document.querySelector('#nb-messages');
+const nbThreadsElement = document.querySelector('#nb-threads');
 
 /**
  * Log infos to console
@@ -89,7 +92,13 @@ function updateSigninStatus(isSignedIn) {
         gapi.client.gmail.users.getProfile({
             userId: 'me'
         }).then(response => {
-            document.querySelector('div#user').innerHTML = response.result.emailAddress;
+            userElement.innerHTML = response.result.emailAddress
+        });
+        gapi.client.gmail.users.getProfile({
+            userId: 'me'
+        }).then(response => {
+            nbMessagesElement.innerHTML = response.result.messagesTotal;
+            nbThreadsElement.innerHTML = response.result.threadsTotal;
         });
 
         // TODO: start the job
