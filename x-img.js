@@ -6,7 +6,7 @@ class XImg extends HTMLElement {
     }
 
     connectedCallback() {
-        const link = this.getAttribute('link');
+        let link = this.getAttribute('link');
         const img = this.getAttribute('src') ?? `${link}/icon.svg`;
         const legend = this.getAttribute('legend') ?? link ?? img;
 

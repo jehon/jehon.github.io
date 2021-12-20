@@ -146,7 +146,7 @@ class XRepository extends HTMLElement {
             .then(result => result.data)
             .then(data => {
                 data.map(pr => {
-                    console.log(pr);
+                    // console.log(pr);
 
 
                     // https://api.github.com/repos/${this.owner}/kiosk/pulls/620/commits
