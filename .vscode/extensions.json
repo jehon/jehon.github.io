@@ -5,6 +5,7 @@
         "takumii.markdowntable",
         "nobuhito.printcode",
         "ecmel.vscode-html-css",
-        "gruntfuggly.todo-tree"
+        "gruntfuggly.todo-tree",
+        "mkaufman.htmlhint"
     ]
 }

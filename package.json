@@ -1,0 +1,24 @@
+{
+  "name": "jehon.github.io",
+  "version": "1.0.0",
+  "description": "See https://pages.github.com/",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jehon/jehon.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jehon/jehon.github.io/issues"
+  },
+  "homepage": "https://github.com/jehon/jehon.github.io#readme",
+  "devDependencies": {
+    "eslint": "8.5.0",
+    "htmlhint": "1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint && htmlhint"
+  }
+}
