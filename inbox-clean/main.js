@@ -17,6 +17,8 @@ const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/r
 // included, separated by spaces.
 const SCOPES = 'https://www.googleapis.com/auth/gmail.modify';
 
+const minAgeYears = 2;
+
 const logElement = document.querySelector('#log');
 const authorizeButton = document.querySelector('button#gapi-authorize');
 const signoutButton = document.querySelector('button#gapi-signout');
