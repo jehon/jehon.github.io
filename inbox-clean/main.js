@@ -101,7 +101,8 @@ function updateSigninStatus(isSignedIn) {
             nbThreadsElement.innerHTML = response.result.threadsTotal;
         });
 
-        // TODO: start the job
+        // Start the job
+        startAnalysis();
     } else {
         info("Not connected");
         authorizeButton.style.display = 'block';
@@ -109,3 +110,5 @@ function updateSigninStatus(isSignedIn) {
     }
 }
 
+function startAnalysis() {
+}
