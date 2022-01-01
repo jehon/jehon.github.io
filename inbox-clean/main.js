@@ -139,8 +139,7 @@ function startAnalysis() {
     // Get all the labels (id => name)
     //
     return gapi.client.gmail.users.labels.list({
-        userId: 'me',
-        // maxResults: 200
+        userId: 'me'
     })
         .then(response => response.result)
         .then(result => {
@@ -178,13 +177,15 @@ function generateMessages(fromPage = '') {
     })
         .then(response => response.result)
         .then(async result => {
-            info(`Got message list: ${result.threads.length} with ${result.nextPageToken} for next page`)
+            info(`Got message list: ${result.threads.length} threads (${result.nextPageToken ? `with ${result.nextPageToken} for next page` : 'final'})`)
             // https://developers.google.com/gmail/api/v1/reference/users/threads#resource
             for (const t of result.threads) {
                 await handleThread(t);
             }
-            // TODO: take next page
-            // await generateMessages(result.nextPageToken);
+            if (result.nextPageToken) {
+                // Loop to next page
+                await generateMessages(result.nextPageToken);
+            }
         });
 }
 
