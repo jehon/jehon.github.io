@@ -217,16 +217,17 @@ function handleThread(shortThread) {
         .then(async thread => {
 
             // function getAllLabelsForThread(thread) {
-            let labelSet = new Set();
+            let labelsSet = new Set();
             thread.messages.forEach(el => {
-                if (el.labelIds) labelSet.add(...el.labelIds);
+                el.labelIds?.forEach(l => labelsSet.add(l))
             })
-            const labels = Array.from(labelSet)
-                .filter(l => !['SENT', 'IMPORTANT'].includes(l))
+            const labels = Array.from(labelsSet)
+                .filter(l => !['SENT', 'IMPORTANT', 'UNREAD', 'CHAT'].includes(l))
                 .filter(l => !l.startsWith('CATEGORY_'))
 
             const msg = {
                 labels,
+                labelsSet,
                 amount: thread.messages.length,
                 lastMessageDateRaw: thread.messages.map(v => v.internalDate).pop(),
                 lastMessageDate:
@@ -236,6 +237,7 @@ function handleThread(shortThread) {
                         )
                     ).toISOString(),
                 subject: thread.messages[0].payload.headers.filter(f => f.name == 'Subject')[0]?.value ?? '-no subject-',
+                thread
             }
 
             if (labels.length == 0) {
