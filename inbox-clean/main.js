@@ -155,11 +155,12 @@ function generateMessages(fromPage = '') {
     })
         .then(response => response.result)
         .then(result => {
+            info(`Got message list: ${result.threads.length} with ${result.nextPageToken} for next page`)
             // https://developers.google.com/gmail/api/v1/reference/users/threads#resource
             for (const t of result.threads) {
                 handleThread(t);
             }
-            // response.result.nextPageToken
+            // result.nextPageToken
 
             // TODO: take next page
         });
