@@ -9,7 +9,6 @@
 //
 
 const DeleteLabel = '_delete';
-// const ignoreLabels = [];
 
 // Client ID and API key from the Developer Console
 const gapi_client_id = "373603847380-uae3tg7m95ehtblu7o3s5tanmebji9ka.apps.googleusercontent.com";
