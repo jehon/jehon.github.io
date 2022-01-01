@@ -8,6 +8,7 @@
 //    https://console.developers.google.com/
 //
 
+const minAgeYears = 4;
 const DeleteLabel = '_delete';
 
 // Client ID and API key from the Developer Console
@@ -18,8 +19,6 @@ const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/r
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
 const SCOPES = 'https://www.googleapis.com/auth/gmail.modify';
-
-const minAgeYears = 2;
 
 const logElement = document.querySelector('#log');
 const authorizeButton = document.querySelector('button#gapi-authorize');
@@ -223,7 +222,7 @@ function handleThread(shortThread) {
                 if (el.labelIds) labelSet.add(...el.labelIds);
             })
             const labels = Array.from(labelSet)
-                .filter(l => !['SENT'].includes(l))
+                .filter(l => !['SENT', 'IMPORTANT'].includes(l))
                 .filter(l => !l.startsWith('CATEGORY_'))
 
             const msg = {
@@ -253,6 +252,7 @@ function handleThread(shortThread) {
                     id: thread.id,
                 }, { "addLabelIds": [labelDelete] })
             } else {
+                info(`Kept ${msg.subject} [${msg.labels.join('][')}] (#${msg.amount}) at ${msg.lastMessageDate}`);
                 if (labels.includes(labelDelete)) {
                     reportToPage('Already Marked', nbAlreadyMarked++);
                 } else {
