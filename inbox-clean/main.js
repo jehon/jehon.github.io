@@ -8,6 +8,9 @@
 //    https://console.developers.google.com/
 //
 
+const DeleteLabel = '_delete';
+// const ignoreLabels = [];
+
 // Client ID and API key from the Developer Console
 const gapi_client_id = "373603847380-uae3tg7m95ehtblu7o3s5tanmebji9ka.apps.googleusercontent.com";
 // Array of API discovery doc URLs for APIs
@@ -45,21 +48,27 @@ const statsElements = document.querySelector('.stats');
  * Add an element to the page (stat section)
  */
 function reportToPage(title, value) {
+    const existElement = statsElements.querySelector(`[report='${title}']`);
+    if (existElement) {
+        existElement.innerHTML = value;
+        return;
+    }
+
     const el = document.createElement('div')
-    el.innerHTML = `<span>${title}</span><span>${value}</span>`;
+    el.innerHTML = `<span>${title}</span><span report='${title}'>${value}</span>`;
     statsElements.insertAdjacentElement('beforeend', el);
-    return el;
 }
 
 /**
  * Test that we have the secret
  */
-const gapi_client_secret = localStorage.jh_gapi_client_secret;
-if (!gapi_client_secret) {
-    const msg = 'ERROR: no gapi_client_secret found in the localstorage. Use localStorage.jh_gapi_client_secret = "xxx"; to set it';
-    info(msg);
-    throw new Error(msg);
-}
+const gapi_client_secret = "373603847380-uae3tg7m95ehtblu7o3s5tanmebji9ka.apps.googleusercontent.com";
+// const gapi_client_secret = localStorage.jh_gapi_client_secret;
+// if (!gapi_client_secret) {
+//     const msg = 'ERROR: no gapi_client_secret found in the localstorage. Use localStorage.jh_gapi_client_secret = "xxx"; to set it';
+//     info(msg);
+//     throw new Error(msg);
+// }
 
 info("gapi_client_secret found");
 
@@ -127,7 +136,7 @@ function updateSigninStatus(isSignedIn) {
 let labelsList = {};
 
 /**
- * id of the label "_delete"
+ * id of the label DeleteLabel
  */
 let labelDelete = '';
 
@@ -145,13 +154,13 @@ function startAnalysis() {
         .then(result => {
             result.labels.forEach((v) => {
                 labelsList[v.id] = v.name;
-                if (v.name == '_delete') {
+                if (v.name == DeleteLabel) {
                     labelDelete = v.id;
                 }
             })
 
             if (!labelDelete) {
-                info("You don't have the '_delete' label set: ", Object.values(labelsList).sort().join(', '));
+                info(`You don't have the '${DeleteLabel}' label set: ${Object.values(labelsList).sort().join(', ')}`);
                 return;
             }
 
@@ -179,9 +188,8 @@ function generateMessages(fromPage = '') {
         .then(async result => {
             info(`Got message list: ${result.threads.length} threads (${result.nextPageToken ? `with ${result.nextPageToken} for next page` : 'final'})`)
             // https://developers.google.com/gmail/api/v1/reference/users/threads#resource
-            for (const t of result.threads) {
-                await handleThread(t);
-            }
+
+            await Promise.all(result.threads.map(t => handleThread(t)))
             if (result.nextPageToken) {
                 // Loop to next page
                 await generateMessages(result.nextPageToken);
@@ -189,6 +197,10 @@ function generateMessages(fromPage = '') {
         });
 }
 
+
+let nbMarked = 0;
+let nbAlreadyMarked = 0;
+let nbKept = 0;
 /**
  * Handle a thread:
  *    - if no labels, mark it with "deletedLabel"
@@ -225,12 +237,13 @@ function handleThread(shortThread) {
                             parseInt(thread.messages.map(v => v.internalDate).pop())
                         )
                     ).toISOString(),
-                subject: thread.messages[0].payload.headers.filter(f => f.name == 'Subject')[0].value,
+                subject: thread.messages[0].payload.headers.filter(f => f.name == 'Subject')[0]?.value ?? '-no subject-',
             }
 
             if (labels.length == 0) {
                 // use "info(...)"
                 info(`Mark ${msg.subject} (#${msg.amount}) at ${msg.lastMessageDate}`);
+                reportToPage('Marked', nbMarked++);
 
                 //
                 // Mark the message with the deletedLabel
@@ -240,6 +253,12 @@ function handleThread(shortThread) {
                     userId: 'me',
                     id: thread.id,
                 }, { "addLabelIds": [labelDelete] })
+            } else {
+                if (labels.includes(labelDelete)) {
+                    reportToPage('Already Marked', nbAlreadyMarked++);
+                } else {
+                    reportToPage('Kept', nbKept++);
+                }
             }
         });
 }
