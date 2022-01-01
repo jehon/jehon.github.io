@@ -24,7 +24,7 @@ const authorizeButton = document.querySelector('button#gapi-authorize');
 const signoutButton = document.querySelector('button#gapi-signout');
 
 /**
- * Log infos to console
+ * Log infos to html
  * 
  * @param  {...any} args to be logged
  */
@@ -136,7 +136,7 @@ function startAnalysis() {
             })
 
             if (!labelDelete) {
-                console.warn("You don't have the '_delete' label set: ", labelsList);
+                info("You don't have the '_delete' label set: ", Object.values(labelsList).sort().join(', '));
                 return;
             }
             reportToPage('Deleted label', labelDelete);
@@ -156,14 +156,12 @@ function generateMessages(fromPage = '') {
         .then(response => response.result)
         .then(result => {
             // https://developers.google.com/gmail/api/v1/reference/users/threads#resource
-            console.log(result.threads);
             for (const t of result.threads) {
                 handleThread(t);
             }
-
             // response.result.nextPageToken
 
-            // Take next page
+            // TODO: take next page
         });
 }
 
@@ -187,8 +185,10 @@ function handleThread(thread) {
                 .filter(l => !l.startsWith('CATEGORY_'))
 
             if (labels.length > 0) {
+                // use "info(...)"
                 console.log('keep', labels, thread);
             } else {
+                // use "info(...)"
                 console.log('mark', labels, thread);
                 // TODO: listing and mark messages
             }
