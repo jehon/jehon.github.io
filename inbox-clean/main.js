@@ -41,6 +41,9 @@ function info(...args) {
 }
 
 const statsElements = document.querySelector('.stats');
+/**
+ * Add an element to the page (stat section)
+ */
 function reportToPage(title, value) {
     const el = document.createElement('div')
     el.innerHTML = `<span>${title}</span><span>${value}</span>`;
@@ -118,10 +121,23 @@ function updateSigninStatus(isSignedIn) {
     }
 }
 
+/**
+ * All the labels used in the GMail
+ */
 let labelsList = {};
+
+/**
+ * id of the label "_delete"
+ */
 let labelDelete = '';
 
+/**
+ * Start the real analysis
+ */
 function startAnalysis() {
+    //
+    // Get all the labels (id => name)
+    //
     return gapi.client.gmail.users.labels.list({
         userId: 'me',
         // maxResults: 200
@@ -139,38 +155,51 @@ function startAnalysis() {
                 info("You don't have the '_delete' label set: ", Object.values(labelsList).sort().join(', '));
                 return;
             }
+
             reportToPage('Deleted label', labelDelete);
             generateMessages();
         })
 }
 
+/**
+ * Get all the messages by search
+ * 
+ * @param {string} fromPage? for multipages 
+ * @returns 
+ */
 function generateMessages(fromPage = '') {
     // https://developers.google.com/gmail/api/v1/reference/users/threads/list
     return gapi.client.gmail.users.threads.list({
         userId: 'me',
         includeSpamTrash: false,
-        maxResults: 20,
+        maxResults: 25,
         q: `older_than:${minAgeYears}y`,
         pageToken: fromPage
     })
         .then(response => response.result)
-        .then(result => {
+        .then(async result => {
             info(`Got message list: ${result.threads.length} with ${result.nextPageToken} for next page`)
             // https://developers.google.com/gmail/api/v1/reference/users/threads#resource
             for (const t of result.threads) {
-                handleThread(t);
+                await handleThread(t);
             }
-            // result.nextPageToken
-
             // TODO: take next page
+            // await generateMessages(result.nextPageToken);
         });
 }
 
-function handleThread(thread) {
+/**
+ * Handle a thread:
+ *    - if no labels, mark it with "deletedLabel"
+ * 
+ * @param {thread} shortThread 
+ * @returns 
+ */
+function handleThread(shortThread) {
     // https://developers.google.com/gmail/api/v1/reference/users/threads/get
     return gapi.client.gmail.users.threads.get({
         userId: 'me',
-        id: thread.id,
+        id: shortThread.id,
         format: 'metadata'
     })
         .then(response => response.result)
@@ -185,13 +214,31 @@ function handleThread(thread) {
                 .filter(l => !['SENT'].includes(l))
                 .filter(l => !l.startsWith('CATEGORY_'))
 
-            if (labels.length > 0) {
+            const msg = {
+                labels,
+                amount: thread.messages.length,
+                lastMessageDateRaw: thread.messages.map(v => v.internalDate).pop(),
+                lastMessageDate:
+                    (
+                        new Date(
+                            parseInt(thread.messages.map(v => v.internalDate).pop())
+                        )
+                    ).toISOString(),
+                subject: thread.messages[0].payload.headers.filter(f => f.name == 'Subject')[0].value,
+            }
+
+            if (labels.length == 0) {
                 // use "info(...)"
-                console.log('keep', labels, thread);
-            } else {
-                // use "info(...)"
-                console.log('mark', labels, thread);
-                // TODO: listing and mark messages
+                info(`Mark ${msg.subject} (#${msg.amount}) at ${msg.lastMessageDate}`);
+
+                //
+                // Mark the message with the deletedLabel
+                //
+                // https://developers.google.com/gmail/api/reference/rest/v1/users.threads/modify
+                return gapi.client.gmail.users.threads.modify({
+                    userId: 'me',
+                    id: thread.id,
+                }, { "addLabelIds": [labelDelete] })
             }
         });
 }
