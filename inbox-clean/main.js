@@ -10,7 +10,7 @@
 
 // Client ID and API key from the Developer Console
 const gapi_client_id = "373603847380-uae3tg7m95ehtblu7o3s5tanmebji9ka.apps.googleusercontent.com";
-// Array of API discovery doc URLs for APIs used by the quickstart
+// Array of API discovery doc URLs for APIs
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
 
 // Authorization scopes required by the API; multiple scopes can be
@@ -22,9 +22,6 @@ const minAgeYears = 2;
 const logElement = document.querySelector('#log');
 const authorizeButton = document.querySelector('button#gapi-authorize');
 const signoutButton = document.querySelector('button#gapi-signout');
-const userElement = document.querySelector('#user');
-const nbMessagesElement = document.querySelector('#nb-messages');
-const nbThreadsElement = document.querySelector('#nb-threads');
 
 /**
  * Log infos to console
@@ -41,6 +38,14 @@ function info(...args) {
         }
     }
     logElement.insertAdjacentElement('beforeend', log);
+}
+
+const statsElements = document.querySelector('.stats');
+function reportToPage(title, value) {
+    const el = document.createElement('div')
+    el.innerHTML = `<span>${title}</span><span>${value}</span>`;
+    statsElements.insertAdjacentElement('beforeend', el);
+    return el;
 }
 
 /**
@@ -94,17 +99,18 @@ function updateSigninStatus(isSignedIn) {
         gapi.client.gmail.users.getProfile({
             userId: 'me'
         }).then(response => {
-            userElement.innerHTML = response.result.emailAddress
+            reportToPage('Username', response.result.emailAddress);
         });
         gapi.client.gmail.users.getProfile({
             userId: 'me'
         }).then(response => {
-            nbMessagesElement.innerHTML = response.result.messagesTotal;
-            nbThreadsElement.innerHTML = response.result.threadsTotal;
+            reportToPage('Nb messages', response.result.messagesTotal);
+            reportToPage('Nb threads', response.result.threadsTotal);
+
+            // Start the job
+            startAnalysis();
         });
 
-        // Start the job
-        startAnalysis();
     } else {
         info("Not connected");
         authorizeButton.style.display = 'block';
@@ -112,5 +118,79 @@ function updateSigninStatus(isSignedIn) {
     }
 }
 
+let labelsList = {};
+let labelDelete = '';
+
 function startAnalysis() {
+    return gapi.client.gmail.users.labels.list({
+        userId: 'me',
+        // maxResults: 200
+    })
+        .then(response => response.result)
+        .then(result => {
+            result.labels.forEach((v) => {
+                labelsList[v.id] = v.name;
+                if (v.name == '_delete') {
+                    labelDelete = v.id;
+                }
+            })
+
+            if (!labelDelete) {
+                console.warn("You don't have the '_delete' label set: ", labelsList);
+                return;
+            }
+            reportToPage('Deleted label', labelDelete);
+            generateMessages();
+        })
+}
+
+function generateMessages(fromPage = '') {
+    // https://developers.google.com/gmail/api/v1/reference/users/threads/list
+    return gapi.client.gmail.users.threads.list({
+        userId: 'me',
+        includeSpamTrash: false,
+        maxResults: 20,
+        q: `older_than:${minAgeYears}y`,
+        pageToken: fromPage
+    })
+        .then(response => response.result)
+        .then(result => {
+            // https://developers.google.com/gmail/api/v1/reference/users/threads#resource
+            console.log(result.threads);
+            for (const t of result.threads) {
+                handleThread(t);
+            }
+
+            // response.result.nextPageToken
+
+            // Take next page
+        });
+}
+
+function handleThread(thread) {
+    // https://developers.google.com/gmail/api/v1/reference/users/threads/get
+    return gapi.client.gmail.users.threads.get({
+        userId: 'me',
+        id: thread.id,
+        format: 'metadata'
+    })
+        .then(response => response.result)
+        .then(async thread => {
+
+            // function getAllLabelsForThread(thread) {
+            let labelSet = new Set();
+            thread.messages.forEach(el => {
+                if (el.labelIds) labelSet.add(...el.labelIds);
+            })
+            const labels = Array.from(labelSet)
+                .filter(l => !['SENT'].includes(l))
+                .filter(l => !l.startsWith('CATEGORY_'))
+
+            if (labels.length > 0) {
+                console.log('keep', labels, thread);
+            } else {
+                console.log('mark', labels, thread);
+                // TODO: listing and mark messages
+            }
+        });
 }
