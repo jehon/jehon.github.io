@@ -184,7 +184,11 @@ function generateMessages(fromPage = '') {
     })
         .then(response => response.result)
         .then(async result => {
-            info(`Got message list: ${result.threads.length} threads (${result.nextPageToken ? `with ${result.nextPageToken} for next page` : 'final'})`)
+            if (!result.threads) {
+                info(`Got no messages in list (#${result.resultSizeEstimate})`);
+                return;
+            }
+            info(`Got message's list: ${result.threads.length} threads (${result.nextPageToken ? `with ${result.nextPageToken} for next page` : 'final'})`)
             // https://developers.google.com/gmail/api/v1/reference/users/threads#resource
 
             await Promise.all(result.threads.map(t => handleThread(t)))
