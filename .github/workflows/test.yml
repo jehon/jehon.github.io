@@ -1,4 +1,4 @@
-name: Makefile
+name: NPM
 
 on:
   push:
