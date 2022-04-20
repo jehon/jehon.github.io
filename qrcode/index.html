@@ -17,6 +17,7 @@
         <tr>
             <td>
                 <canvas id="qr"></canvas>
+                <pre id="txt"></pre>
             </td>
             <td>
                 <form id="data">
@@ -25,6 +26,7 @@
                     <legend>Montant</legend><input name="amount" type="number"><br>
                     <legend>freeCom</legend><input name="freeCom"><br>
                     <legend>structuredCom</legend><input name="structuredCom" pattern="[0-9]{3}/[0-9]{5}/[0-9]{4}"><br>
+                    <div id="digit"></div>
                     <button id="generate">Generate</button>
                 </form>
                 <div id="ts"></div>
@@ -43,7 +45,7 @@
             cocoricoop: {
                 name: 'cocoricoop',
                 account: 'BE05103055843675',
-                structuredCom: '211/10'
+                structuredCom: '085/1927/54182'
             },
             KDM_France: {
                 name: 'KDM France',
@@ -54,17 +56,28 @@
         }
 
         function generateQR() {
-            data = {
+            const data = {
                 name: '',
                 account: '',
-                amount: '0',
+                amount: '',
                 freeCom: '',
                 structuredCom: '',
                 ...Object.fromEntries((new FormData(document.querySelector('form#data'))).entries()),
             };
             console.log("Generating to ", data);
 
-            QRCode.toCanvas(document.getElementById('qr'), [
+            if (data.structuredCom) {
+                const com = data.structuredCom.replaceAll('/', '');
+                const verif = Math.floor(com / 100);              // enlève les 2 derniers chiffres = check digits 
+                const digit = com % 100;                     // check digit entré par l'utilisateur 
+                const check = 97 - (verif % 97);
+                console.log(check, digit);
+                document.querySelectorAll('#digit').forEach(el => el.innerHTML = `Check digit: ${check} - received ${digit}`);
+
+            }
+
+
+            const str = [
                 'BCD', // Service tag (const)
                 '002', // Version
                 "1", // Encoding = UTF8
@@ -72,16 +85,18 @@
                 '',  // BIC (opt)
                 data.name, // Name
                 data.account, // IBAN
-                'EUR' + data.amount,
+                data.amount ? 'EUR' + data.amount : '', // (opt)
                 '', // Purpose (opt)
                 data.freeCom, // Unstructured com (opt)
                 data.structuredCom // Structured com (opt)
-            ].join('\n')
-                , function (error) {
-                    if (error) {
-                        console.error(error)
-                    }
-                })
+            ].join('\n');
+
+            QRCode.toCanvas(document.getElementById('qr'), str, function (error) {
+                if (error) {
+                    console.error(error)
+                }
+            });
+            document.querySelectorAll('#txt').forEach(el => el.innerHTML = str);
             document.querySelectorAll('#ts').forEach(el => el.innerHTML = (new Date()).getMilliseconds());
         }
 
