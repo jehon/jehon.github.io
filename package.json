@@ -18,6 +18,10 @@
     "htmlhint": "1.1.4"
   },
   "scripts": {
+    "start": "http-server --port 8080",
     "test": "eslint && htmlhint"
+  },
+  "dependencies": {
+    "http-server": "14.1.0"
   }
 }
