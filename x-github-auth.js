@@ -61,7 +61,10 @@ class XGithubAuth extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         if (getToken()) {
             // We are authenticated, ok
-            this.shadowRoot.innerHTML = '<slot></slot>';
+            this.shadowRoot.innerHTML = `
+                <a href='https://github.com/settings/tokens'>View tokens</a>
+                <slot></slot>
+            `;
         } else {
             // We need to authenticate!
             this.shadowRoot.innerHTML = `
