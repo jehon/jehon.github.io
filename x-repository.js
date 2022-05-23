@@ -172,7 +172,7 @@ class XRepository extends HTMLElement {
             })
 
 
-        octokit.request("POST /repos/{owner}/{repo}/codespaces", {
+        octokit.request("GET /repos/{owner}/{repo}/codespaces", {
             owner: this.owner,
             repo: this.prj
         })
