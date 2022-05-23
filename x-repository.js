@@ -97,6 +97,7 @@ class XRepository extends HTMLElement {
                         <div id='badge'>    
                             <img src='https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml/badge.svg?branch=main' onerror="this.style.display='none'">
                         </div>
+                        <div id='codespaces' class='.btn-group-vertical'></div>
                         <div id='pr'></div>
                         <div id='branches'></div>
                         <div id='spacer'></div>
@@ -117,6 +118,8 @@ class XRepository extends HTMLElement {
 
         const branchesEl = this.shadowRoot.querySelector('#branches');
         branchesEl.innerHTML = '';
+
+        const codespacesEl = this.shadowRoot.querySelector('#codespaces');
 
         octokit.pulls.list({
             owner: this.owner,
@@ -179,7 +182,13 @@ class XRepository extends HTMLElement {
             // .then(data => Array.isArray(data) ? data : [])
             .then(result => result.data)
             .then(data => {
-                console.log(data);
+                for (const cd of data.codespaces) {
+                    console.log(cd);
+                    codespacesEl.insertAdjacentHTML('beforeend', `
+                        <a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>
+                        
+                    `);
+                }
             });
         // Problem: CORS
 
