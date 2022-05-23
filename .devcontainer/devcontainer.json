@@ -17,5 +17,6 @@
 		"ecmel.vscode-html-css",
 		"gruntfuggly.todo-tree",
 		"mkaufman.htmlhint"
-	]
+	],
+	"postCreateCommand": "npm install"
 }
