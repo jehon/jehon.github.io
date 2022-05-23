@@ -1,7 +1,6 @@
 
-import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
-import { throttling } from "https://cdn.skypack.dev/@octokit/plugin-throttling";
-import { retry } from "https://cdn.skypack.dev/@octokit/plugin-retry";
+
+import octokit from './x-github-auth.js'
 
 //
 // https://docs.github.com/en/rest/reference/repos#statuses
@@ -10,29 +9,10 @@ import { retry } from "https://cdn.skypack.dev/@octokit/plugin-retry";
 // https://github.com/octokit/auth-app.js#usage-with-octokit
 //
 
-const octokit = new (Octokit.plugin(throttling).plugin(retry))({
-    throttle: {
-        onRateLimit: (retryAfter, options) => {
-            octokit.log.warn(
-                `Request quota exhausted for request ${options.method} ${options.url}`
-            );
-
-            if (options.request.retryCount === 0) {
-                // only retries once
-                octokit.log.info(`Retrying after ${retryAfter} seconds!`);
-                return true;
-            }
-        },
-        onAbuseLimit: (retryAfter, options) => {
-            // does not retry, only logs a warning
-            octokit.log.warn(
-                `Abuse detected for request ${options.method} ${options.url}`
-            );
-        }
-    },
-    userAgent: "jehon personal dashboard",
-})
-
+//
+// https://github.com/octokit/authentication-strategies.js/
+//  ==> token https://github.com/settings/tokens/new
+//
 
 class XRepository extends HTMLElement {
     static get tag() {
@@ -191,6 +171,16 @@ class XRepository extends HTMLElement {
                     }));
             })
 
+
+        octokit.request("POST /repos/{owner}/{repo}/codespaces", {
+            owner: this.owner,
+            repo: this.prj
+        })
+            // .then(data => Array.isArray(data) ? data : [])
+            .then(result => result.data)
+            .then(data => {
+                console.log(data);
+            });
         // Problem: CORS
 
         // Array.from(this.querySelectorAll('[watch]')).map(
