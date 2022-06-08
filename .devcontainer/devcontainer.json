@@ -16,7 +16,8 @@
 		"nobuhito.printcode",
 		"ecmel.vscode-html-css",
 		"gruntfuggly.todo-tree",
-		"mkaufman.htmlhint"
+		"mkaufman.htmlhint",
+		"meganrogge.template-string-converter"
 	],
 	"postCreateCommand": "npm install"
 }
