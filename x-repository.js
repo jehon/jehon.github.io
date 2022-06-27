@@ -198,7 +198,13 @@ class XRepository extends HTMLElement {
                         <a class="btn btn-warning">New!</a>
                     `);
                     codespacesEl.querySelector('a').addEventListener('click', () => {
-                        console.log("Creating a codespace?")
+                        octokit.request('POST /user/codespaces', {
+                            repository_id: 1,
+                            ref: 'main',
+                            location: 'WestUs2'
+                        }).then(data => {
+                        })
+
                     })
                 }
             });
