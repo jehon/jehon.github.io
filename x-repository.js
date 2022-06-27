@@ -188,7 +188,7 @@ class XRepository extends HTMLElement {
                         
                     `);
                 }
-                if (cd.length < 0) {
+                if (cd.length <= 0) {
                     // Codespaces:
                     //   None is found, we propose to create one:
                     //
