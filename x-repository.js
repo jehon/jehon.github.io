@@ -203,6 +203,7 @@ class XRepository extends HTMLElement {
                             ref: 'main',
                             location: 'WestUs2'
                         }).then(data => {
+                            console.log("Created here: ", data.web_url);
                         })
 
                     })

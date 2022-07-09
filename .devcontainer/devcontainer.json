@@ -11,7 +11,8 @@
 		"ecmel.vscode-html-css",
 		"gruntfuggly.todo-tree",
 		"mkaufman.htmlhint",
-		"meganrogge.template-string-converter"
+		"meganrogge.template-string-converter",
+		"cschleiden.vscode-github-actions"
 	],
 	"postCreateCommand": "npm install"
 }
