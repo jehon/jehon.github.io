@@ -15,14 +15,12 @@
   "homepage": "https://github.com/jehon/jehon.github.io#readme",
   "devDependencies": {
     "eslint": "8.24.0",
-    "htmlhint": "1.1.4"
+    "htmlhint": "1.1.4",
+    "http-server": "14.1.1"
   },
   "scripts": {
     "start": "http-server --port 8080",
     "lint": "eslint && htmlhint",
     "test": "npm run lint"
-  },
-  "dependencies": {
-    "http-server": "14.1.1"
   }
 }
