@@ -1,4 +1,6 @@
 
+import { inject } from './config.js'
+
 class XImg extends HTMLElement {
     constructor() {
         super();
@@ -6,7 +8,7 @@ class XImg extends HTMLElement {
     }
 
     connectedCallback() {
-        let link = this.getAttribute('link');
+        const link = inject(this.getAttribute('link'));
         const img = this.getAttribute('src') ?? `${link}/icon.svg`;
         const legend = this.getAttribute('legend') ?? link ?? img;
 
