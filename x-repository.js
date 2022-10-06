@@ -179,6 +179,7 @@ class XRepository extends HTMLElement {
                         branchesEl.innerHTML += `<div>${br}</div>`
                     }));
             })
+            .catch(() => true) // TODO: not clean
 
 
         octokit.request("GET /repos/{owner}/{repo}/codespaces", {
@@ -214,7 +215,9 @@ class XRepository extends HTMLElement {
 
                     })
                 }
-            });
+            })
+            .catch(() => true) // TODO: not clean
+
         // Problem: CORS
 
         // Array.from(this.querySelectorAll('[watch]')).map(
