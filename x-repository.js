@@ -111,6 +111,7 @@ class XRepository extends HTMLElement {
                             <slot></slot>
                         </div>
                         <div id='actions'>
+                            <span id='npm'></span>
                             <a href="https://github.com/${this.owner}/${this.prj}/pulls" class="btn btn-primary">Pull requests</a>
                             <a href="https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
                         </div>
@@ -217,6 +218,15 @@ class XRepository extends HTMLElement {
                 }
             })
             .catch(() => true) // TODO: not clean
+
+        if (this.hasAttribute('npm')) {
+            const npm = this.getAttribute('npm');
+            if (npm) {
+                fetch(`https://registry.npmjs.org/${npm}`)
+                    .then(response => response.json())
+                    .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`);
+            }
+        }
 
         // Problem: CORS
 
