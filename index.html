@@ -67,12 +67,9 @@
     <div style="display: grid">
       <h3>Structural</h3>
       <x-repository prj="actions-devcontainer"></x-repository>
-      <x-repository prj="config">
-        <a class="btn btn-warning" href="https://jehon.github.io/config">Github pages</a>
-      </x-repository>
-      <x-repository prj="packages" pages>
+      <x-repository prj="config" gh-pages></x-repository>
+      <x-repository prj="packages" gh-pages>
         <a class="btn btn-info" href="http://localhost:9000" watch>Dev stack</a>
-        <a class="btn btn-warning" href="https://jehon.github.io/packages">Github pages</a>
       </x-repository>
       <x-repository prj="jehon.github.io" no-badge></x-repository>
       <x-repository prj="windows" no-badge></x-repository>
