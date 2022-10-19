@@ -165,7 +165,9 @@ class XRepository extends HTMLElement {
                     //   status => agglomerated
                     //   statuses => what ? protected ?
 
-                    prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a></div>`;
+                    // TODO: prEl.statuses_url <= make api request to get status!
+
+                    prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''} #status#</a></div>`;
                 })
                 return data;
             })
