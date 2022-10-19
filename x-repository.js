@@ -51,6 +51,10 @@ class XRepository extends HTMLElement {
                     margin: 20px;
                 }
 
+                :host([no-badge]) #badge {
+                    display: none;
+                }
+
                 div.card-text {
                     margin: 20px;
                     display: flex;
