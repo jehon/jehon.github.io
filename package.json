@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/jehon/jehon.github.io#readme",
   "devDependencies": {
-    "eslint": "8.27.0",
+    "eslint": "8.28.0",
     "htmlhint": "1.1.4",
     "http-server": "14.1.1"
   },
