@@ -136,6 +136,7 @@ class XRepository extends HTMLElement {
         branchesEl.innerHTML = '';
 
         const codespacesEl = this.shadowRoot.querySelector('#codespaces');
+        const pagesEl = this.shadowRoot.querySelector('#pages');
 
         octokit.pulls.list({
             owner: this.owner,
@@ -240,7 +241,7 @@ class XRepository extends HTMLElement {
         }
 
         if (this.hasAttribute('gh-pages')) {
-            this.shadowRoot.querySelector('#pages').removeAttribute('hidden');
+            pagesEl.removeAttribute('hidden');
         }
 
         // Problem: CORS
