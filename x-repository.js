@@ -54,7 +54,7 @@ class XRepository extends HTMLElement {
                 :host([no-badge]) #badge {
                     display: none;
                 }
-
+                
                 [hidden] {
                     display: none
                 }
@@ -186,6 +186,12 @@ class XRepository extends HTMLElement {
                     .then(result => result.data)
                     // .then(data => Array.isArray(data) ? data : [])
                     .then(data => data.map(br => br.name))
+                    .then(branches => {
+                        if (branches.includes('gh-pages')) {
+                            pagesEl.removeAttribute('hidden')
+                        }
+                        return branches;
+                    })
                     .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
                     .then(branches => branches.map(br => {
                         // console.log(branches);
