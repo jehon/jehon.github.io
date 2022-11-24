@@ -55,6 +55,10 @@ class XRepository extends HTMLElement {
                     display: none;
                 }
 
+                [hidden] {
+                    display: none
+                }
+
                 div.card-text {
                     margin: 20px;
                     display: flex;
@@ -116,7 +120,7 @@ class XRepository extends HTMLElement {
                         </div>
                         <div id='actions'>
                             <span id='npm'></span>
-                            <span id='pages'></span>
+                            <a id='pages' hidden href="https://jehon.github.io/${this.prj}" class="btn btn-warning" >Github pages</a>
                             <a href="https://github.com/${this.owner}/${this.prj}/pulls" class="btn btn-primary">Pull requests</a>
                             <a href="https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
                         </div>
@@ -236,7 +240,7 @@ class XRepository extends HTMLElement {
         }
 
         if (this.hasAttribute('gh-pages')) {
-            this.shadowRoot.querySelector('#pages').innerHTML = `<a class="btn btn-warning" href="https://jehon.github.io/${this.prj}">Github pages</a>`
+            this.shadowRoot.querySelector('#pages').removeAttribute('hidden');
         }
 
         // Problem: CORS
