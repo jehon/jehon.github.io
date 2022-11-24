@@ -1,5 +1,5 @@
 
-const config = await fetch("https://jehon.github.io/config/dev-config.json")
+const config = await fetch("https://jehon.github.io/packages/dev-config.json")
     .then(response => response.json())
 
 export default config;
