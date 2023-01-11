@@ -102,8 +102,10 @@ class XRepository extends HTMLElement {
                 </div>
                 <div class="card-body">
                     <div class="card-text">
-                        <div id='badge'>    
-                            <img src='https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml/badge.svg?branch=main' onerror="this.style.display='none'">
+                        <div id='badge'>
+                            <a href='https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml'>
+                                <img src='https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml/badge.svg?branch=main' onerror="this.style.display='none'">
+                            </a>
                         </div>
                         <div id='remote-containers' class='.btn-group-vertical'>
                             <a href='vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/${this.owner}/${this.prj}' class='btn btn-primary'>
