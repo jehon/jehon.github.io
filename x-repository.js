@@ -129,127 +129,6 @@ class XRepository extends HTMLElement {
             </div >
     `;
 
-        const prEl = this.shadowRoot.querySelector('#pr');
-        prEl.innerHTML = '';
-
-        const branchesEl = this.shadowRoot.querySelector('#branches');
-        branchesEl.innerHTML = '';
-
-        const codespacesEl = this.shadowRoot.querySelector('#codespaces');
-        const pagesEl = this.shadowRoot.querySelector('#pages');
-
-        octokit.pulls.list({
-            owner: this.owner,
-            repo: this.prj
-        })
-            // .then(data => Array.isArray(data) ? data : [])
-            .then(result => result.data)
-            .then(data => {
-                data.map(pr => {
-                    // console.log(pr);
-
-
-                    // https://api.github.com/repos/${this.owner}/kiosk/pulls/620/commits
-                    // => parents.0.url => + /status
-                    // => https://api.github.com/repos/${this.owner}/kiosk/commits/771b2184adaf85853901515bf1edb2875df3ab11/status
-                    //   => .status
-
-                    // cryptomedic.811:
-                    //                     head.sha
-                    //                     722fe1ebb17c61ac0b09e4ea5a2740f340728a85
-
-                    // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
-
-                    // https://api.github.com/repos/:owner/:repo/commits/:ref/statuses
-
-                    // Thanks to: https://stackoverflow.com/a/29449704/1954789 
-                    // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/statuses
-                    // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
-
-                    // Ref: https://docs.github.com/en/rest/reference/repos#statuses
-                    //   status => agglomerated
-                    //   statuses => what ? protected ?
-
-                    // TODO: prEl.statuses_url <= make api request to get status!
-
-                    prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''} #status#</a></div>`;
-                })
-                return data;
-            })
-            .then(data => data.map(pr => pr.head.ref))
-            .then(branchesInPr => {
-                // console.log(branchesInPr);
-                octokit.request('GET /repos/{owner}/{repo}/branches', {
-                    owner: this.owner,
-                    repo: this.prj
-                })
-                    .then(result => result.data)
-                    // .then(data => Array.isArray(data) ? data : [])
-                    .then(data => data.map(br => br.name))
-                    .then(branches => {
-                        if (branches.includes('gh-pages')) {
-                            pagesEl.removeAttribute('hidden')
-                        }
-                        return branches;
-                    })
-                    .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
-                    .then(branches => branches.map(br => {
-                        // console.log(branches);
-                        branchesEl.innerHTML += `<div>${br}</div>`
-                    }));
-            })
-            .catch(() => true) // TODO: not clean
-
-
-        octokit.request("GET /repos/{owner}/{repo}/codespaces", {
-            owner: this.owner,
-            repo: this.prj
-        })
-            // .then(data => Array.isArray(data) ? data : [])
-            .then(result => result.data)
-            .then(data => {
-                for (const cd of data.codespaces) {
-                    codespacesEl.insertAdjacentHTML('beforeend', `
-                        <a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>
-                        
-                    `);
-                }
-                if (data.codespaces.length <= 0) {
-                    // Codespaces:
-                    //   None is found, we propose to create one:
-                    //
-                    //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
-                    //
-                    codespacesEl.insertAdjacentHTML('beforeend', `
-                        <a class="btn btn-warning">New!</a>
-                    `);
-                    codespacesEl.querySelector('a').addEventListener('click', () => {
-                        octokit.request('POST /user/codespaces', {
-                            repository_id: 1,
-                            ref: 'main',
-                            location: 'WestUs2'
-                        }).then(data => {
-                            console.log("Created here: ", data.web_url);
-                        })
-
-                    })
-                }
-            })
-            .catch(() => true) // TODO: not clean
-
-        if (this.hasAttribute('npm')) {
-            const npm = this.getAttribute('npm');
-            if (npm) {
-                fetch(`https://registry.npmjs.org/${npm}`)
-                    .then(response => response.json())
-                    .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`);
-            }
-        }
-
-        if (this.hasAttribute('gh-pages')) {
-            pagesEl.removeAttribute('hidden');
-        }
-
         // Problem: CORS
 
         // Array.from(this.querySelectorAll('[watch]')).map(
@@ -268,6 +147,133 @@ class XRepository extends HTMLElement {
         //         })
         //     }
         // )
+
+        this.refreshData();
+        setTimeout(() => this.refreshData(), 5 * 60 * 1000);
+    }
+
+    async refreshData() {
+        const prEl = this.shadowRoot.querySelector('#pr');
+        prEl.innerHTML = '';
+
+        const branchesEl = this.shadowRoot.querySelector('#branches');
+        branchesEl.innerHTML = '';
+
+        const codespacesEl = this.shadowRoot.querySelector('#codespaces');
+        codespacesEl.innerHTML = '';
+
+        const pagesEl = this.shadowRoot.querySelector('#pages');
+        return Promise.all(
+            [
+                octokit.pulls.list({
+                    owner: this.owner,
+                    repo: this.prj
+                })
+                    .then(result => result.data)
+                    .then(data => {
+                        data.map(pr => {
+                            // console.log(pr);
+
+
+                            // https://api.github.com/repos/${this.owner}/kiosk/pulls/620/commits
+                            // => parents.0.url => + /status
+                            // => https://api.github.com/repos/${this.owner}/kiosk/commits/771b2184adaf85853901515bf1edb2875df3ab11/status
+                            //   => .status
+
+                            // cryptomedic.811:
+                            //                     head.sha
+                            //                     722fe1ebb17c61ac0b09e4ea5a2740f340728a85
+
+                            // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
+
+                            // https://api.github.com/repos/:owner/:repo/commits/:ref/statuses
+
+                            // Thanks to: https://stackoverflow.com/a/29449704/1954789 
+                            // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/statuses
+                            // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
+
+                            // Ref: https://docs.github.com/en/rest/reference/repos#statuses
+                            //   status => agglomerated
+                            //   statuses => what ? protected ?
+
+                            // TODO: prEl.statuses_url <= make api request to get status!
+
+                            prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''} #status#</a></div>`;
+                        })
+                        return data;
+                    })
+                    .then(data => data.map(pr => pr.head.ref))
+                    .then(branchesInPr => {
+                        // console.log(branchesInPr);
+                        octokit.request('GET /repos/{owner}/{repo}/branches', {
+                            owner: this.owner,
+                            repo: this.prj
+                        })
+                            .then(result => result.data)
+                            // .then(data => Array.isArray(data) ? data : [])
+                            .then(data => data.map(br => br.name))
+                            .then(branches => {
+                                if (branches.includes('gh-pages')) {
+                                    pagesEl.removeAttribute('hidden');
+                                } else {
+                                    pagesEl.setAttribute('hidden', 'hidden');
+                                }
+                                return branches;
+                            })
+                            .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
+                            .then(branches => branches.map(br => {
+                                // console.log(branches);
+                                branchesEl.innerHTML += `<div>${br}</div>`
+                            }));
+                    })
+                    .catch(() => true) // TODO: not clean
+                ,
+
+                octokit.request("GET /repos/{owner}/{repo}/codespaces", {
+                    owner: this.owner,
+                    repo: this.prj
+                })
+                    // .then(data => Array.isArray(data) ? data : [])
+                    .then(result => result.data)
+                    .then(data => {
+                        for (const cd of data.codespaces) {
+                            codespacesEl.insertAdjacentHTML('beforeend', `
+                        <a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>
+                        
+                    `);
+                        }
+                        if (data.codespaces.length <= 0) {
+                            // Codespaces:
+                            //   None is found, we propose to create one:
+                            //
+                            //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
+                            //
+                            codespacesEl.insertAdjacentHTML('beforeend', `
+                        <a class="btn btn-warning">New!</a>
+                    `);
+                            codespacesEl.querySelector('a').addEventListener('click', () => {
+                                octokit.request('POST /user/codespaces', {
+                                    repository_id: 1,
+                                    ref: 'main',
+                                    location: 'WestUs2'
+                                }).then(data => {
+                                    console.log("Created here: ", data.web_url);
+                                })
+
+                            })
+                        }
+                    })
+                    .catch(() => true) // TODO: not clean
+                ,
+                () => {
+                    const npm = this.getAttribute('npm');
+                    if (npm) {
+                        fetch(`https://registry.npmjs.org/${npm}`)
+                            .then(response => response.json())
+                            .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                    }
+                }
+            ]);
     }
 }
 
