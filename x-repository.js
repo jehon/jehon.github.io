@@ -30,6 +30,10 @@ class XRepository extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
+    lightWarning(txt = 'warning') {
+        this.setAttribute('warning', txt);
+    }
+
     connectedCallback() {
         this.prj = this.getAttribute('prj');
         this.owner = "jehon";
@@ -49,6 +53,10 @@ class XRepository extends HTMLElement {
                 :host(*) > * {
                     width: 100%;
                     margin: 20px;
+                }
+
+                :host([warning]) {
+                    background-color: #C95C00;
                 }
 
                 :host([no-badge]) #badge {
@@ -159,6 +167,8 @@ class XRepository extends HTMLElement {
     }
 
     async refreshData() {
+        this.removeAttribute('warning');
+
         const prEl = this.shadowRoot.querySelector('#pr');
         prEl.innerHTML = '';
 
@@ -179,7 +189,6 @@ class XRepository extends HTMLElement {
                     .then(data => {
                         data.map(pr => {
                             // console.log(pr);
-
 
                             // https://api.github.com/repos/${this.owner}/kiosk/pulls/620/commits
                             // => parents.0.url => + /status
@@ -206,6 +215,9 @@ class XRepository extends HTMLElement {
 
                             prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''} #status#</a></div>`;
                         })
+                        if (data.length > 0) {
+                            this.lightWarning('pr');
+                        }
                         return data;
                     })
                     .then(data => data.map(pr => pr.head.ref))
@@ -239,7 +251,6 @@ class XRepository extends HTMLElement {
                     owner: this.owner,
                     repo: this.prj
                 })
-                    // .then(data => Array.isArray(data) ? data : [])
                     .then(result => result.data)
                     .then(data => {
                         for (const cd of data.codespaces) {
