@@ -213,6 +213,8 @@ class XRepository extends HTMLElement {
 
                             // TODO: prEl.statuses_url <= make api request to get status!
 
+                            // octokit.request("GET " + pr.statuses_url).then(result => result.data).then(data => console.log('status', data));
+
                             prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''} #status#</a></div>`;
                         })
                         if (data.length > 0) {
@@ -222,7 +224,6 @@ class XRepository extends HTMLElement {
                     })
                     .then(data => data.map(pr => pr.head.ref))
                     .then(branchesInPr => {
-                        // console.log(branchesInPr);
                         octokit.request('GET /repos/{owner}/{repo}/branches', {
                             owner: this.owner,
                             repo: this.prj
@@ -253,32 +254,27 @@ class XRepository extends HTMLElement {
                 })
                     .then(result => result.data)
                     .then(data => {
-                        for (const cd of data.codespaces) {
-                            codespacesEl.insertAdjacentHTML('beforeend', `
-                        <a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>
-                        
-                    `);
-                        }
-                        if (data.codespaces.length <= 0) {
-                            // Codespaces:
-                            //   None is found, we propose to create one:
-                            //
-                            //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
-                            //
-                            codespacesEl.insertAdjacentHTML('beforeend', `
-                        <a class="btn btn-warning">New!</a>
-                    `);
-                            codespacesEl.querySelector('a').addEventListener('click', () => {
-                                octokit.request('POST /user/codespaces', {
-                                    repository_id: 1,
-                                    ref: 'main',
-                                    location: 'WestUs2'
-                                }).then(data => {
-                                    console.log("Created here: ", data.web_url);
-                                })
+                        data.codespaces.map(cd => codespacesEl.insertAdjacentHTML('beforeend', `<a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>`));
+                        //     if (data.codespaces.length <= 0) {
+                        //         // Codespaces:
+                        //         //   None is found, we propose to create one:
+                        //         //
+                        //         //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
+                        //         //
+                        //         codespacesEl.insertAdjacentHTML('beforeend', `
+                        //     <a class="btn btn-warning">New!</a>
+                        // `);
+                        //     codespacesEl.querySelector('a').addEventListener('click', () => {
+                        //         octokit.request('POST /user/codespaces', {
+                        //             repository_id: 1,
+                        //             ref: 'main',
+                        //             location: 'WestUs2'
+                        //         }).then(data => {
+                        //             console.log("Created here: ", data.web_url);
+                        //         })
 
-                            })
-                        }
+                        //     })
+                        // }
                     })
                     .catch(() => true) // TODO: not clean
                 ,
