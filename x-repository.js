@@ -134,15 +134,6 @@ class XRepository extends HTMLElement {
             </div >
     `;
 
-        const actionsEl = this.shadowRoot.querySelector('#badge');
-        (this.getAttribute('workflows') ?? 'test')
-            .split(',')
-            .forEach(workflow => actionsEl.insertAdjacentHTML('beforeend',
-                `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
-                   <img src='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main' onerror="this.style.display='none'">
-                </a>`
-            ));
-
         // Problem: CORS
 
         // Array.from(this.querySelectorAll('[watch]')).map(
@@ -169,6 +160,11 @@ class XRepository extends HTMLElement {
     async refreshData() {
         this.removeAttribute('warning');
 
+        const npm = this.getAttribute('npm');
+
+        const actionsEl = this.shadowRoot.querySelector('#badge');
+        actionsEl.innerHTML = '';
+
         const prEl = this.shadowRoot.querySelector('#pr');
         prEl.innerHTML = '';
 
@@ -179,8 +175,20 @@ class XRepository extends HTMLElement {
         codespacesEl.innerHTML = '';
 
         const pagesEl = this.shadowRoot.querySelector('#pages');
+
         return Promise.all(
             [
+                (this.getAttribute('workflows') ?? 'test')
+                    .split(',')
+                    .forEach(workflow => {
+                        const src = "https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main";
+                        actionsEl.insertAdjacentHTML('beforeend',
+                            `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
+                           <img src='${src}' onerror="this.style.display='none'">
+                        </a>`);
+                        // fetch(src).then(response => response.data)
+                    }),
+
                 octokit.pulls.list({
                     owner: this.owner,
                     repo: this.prj
@@ -223,7 +231,7 @@ class XRepository extends HTMLElement {
                         return data;
                     })
                     .then(data => data.map(pr => pr.head.ref))
-                    .then(branchesInPr => {
+                    .then(branchesInPr =>
                         octokit.request('GET /repos/{owner}/{repo}/branches', {
                             owner: this.owner,
                             repo: this.prj
@@ -243,49 +251,49 @@ class XRepository extends HTMLElement {
                             .then(branches => branches.map(br => {
                                 // console.log(branches);
                                 branchesEl.innerHTML += `<div>${br}</div>`
-                            }));
-                    })
-                    .catch(() => true) // TODO: not clean
-                ,
+                            }))
+                    )
+                    .catch(() => true), // TODO: not clean
 
-                octokit.request("GET /repos/{owner}/{repo}/codespaces", {
-                    owner: this.owner,
-                    repo: this.prj
-                })
-                    .then(result => result.data)
-                    .then(data => {
-                        data.codespaces.map(cd => codespacesEl.insertAdjacentHTML('beforeend', `<a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>`));
-                        //     if (data.codespaces.length <= 0) {
-                        //         // Codespaces:
-                        //         //   None is found, we propose to create one:
-                        //         //
-                        //         //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
-                        //         //
-                        //         codespacesEl.insertAdjacentHTML('beforeend', `
-                        //     <a class="btn btn-warning">New!</a>
-                        // `);
-                        //     codespacesEl.querySelector('a').addEventListener('click', () => {
-                        //         octokit.request('POST /user/codespaces', {
-                        //             repository_id: 1,
-                        //             ref: 'main',
-                        //             location: 'WestUs2'
-                        //         }).then(data => {
-                        //             console.log("Created here: ", data.web_url);
-                        //         })
+                // octokit.request("GET /repos/{owner}/{repo}/codespaces", {
+                //     owner: this.owner,
+                //     repo: this.prj
+                // })
+                //     .then(result => result.data)
+                //     .then(data => {
+                //         data.codespaces.map(cd => codespacesEl.insertAdjacentHTML('beforeend', `<a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>`));
+                //         //     if (data.codespaces.length <= 0) {
+                //         //         // Codespaces:
+                //         //         //   None is found, we propose to create one:
+                //         //         //
+                //         //         //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
+                //         //         //
+                //         //         codespacesEl.insertAdjacentHTML('beforeend', `
+                //         //     <a class="btn btn-warning">New!</a>
+                //         // `);
+                //         //     codespacesEl.querySelector('a').addEventListener('click', () => {
+                //         //         octokit.request('POST /user/codespaces', {
+                //         //             repository_id: 1,
+                //         //             ref: 'main',
+                //         //             location: 'WestUs2'
+                //         //         }).then(data => {
+                //         //             console.log("Created here: ", data.web_url);
+                //         //         })
 
-                        //     })
-                        // }
+                //         //     })
+                //         // }
+                //     })
+                //     .catch(() => true), // TODO: not clean
+
+                Promise.resolve()
+                    .then(() => {
+                        if (npm) {
+                            return fetch(`https://registry.npmjs.org/${npm}`)
+                                .then(response => response.json())
+                                .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                        }
                     })
-                    .catch(() => true) // TODO: not clean
-                ,
-                () => {
-                    const npm = this.getAttribute('npm');
-                    if (npm) {
-                        fetch(`https://registry.npmjs.org/${npm}`)
-                            .then(response => response.json())
-                            .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
-                    }
-                }
+                    .catch(() => true), // TODO: not clean
             ]);
     }
 }
