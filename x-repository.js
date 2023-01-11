@@ -102,11 +102,7 @@ class XRepository extends HTMLElement {
                 </div>
                 <div class="card-body">
                     <div class="card-text">
-                        <div id='badge'>
-                            <a href='https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml'>
-                                <img src='https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml/badge.svg?branch=main' onerror="this.style.display='none'">
-                            </a>
-                        </div>
+                        <div id='badge'></div>
                         <div id='remote-containers' class='.btn-group-vertical'>
                             <a href='vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/${this.owner}/${this.prj}' class='btn btn-primary'>
                             <img src='/vscode.svg' />
@@ -130,6 +126,15 @@ class XRepository extends HTMLElement {
                 </div>
             </div >
     `;
+
+        const actionsEl = this.shadowRoot.querySelector('#badge');
+        (this.getAttribute('workflows') ?? 'test')
+            .split(',')
+            .forEach(workflow => actionsEl.insertAdjacentHTML('beforeend',
+                `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
+                   <img src='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main' onerror="this.style.display='none'">
+                </a>`
+            ));
 
         // Problem: CORS
 
