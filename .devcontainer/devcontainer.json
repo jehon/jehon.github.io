@@ -1,8 +1,7 @@
 {
 	"name": "Node.js",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
+	"image": "mcr.microsoft.com/devcontainers/javascript-node",
+	"features": {},
 	"settings": {},
 	"extensions": [
 		"ritwickdey.liveserver",
