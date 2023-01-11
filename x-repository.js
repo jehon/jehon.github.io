@@ -120,7 +120,6 @@ class XRepository extends HTMLElement {
                             <span id='npm'></span>
                             <a id='pages' hidden href="https://jehon.github.io/${this.prj}" class="btn btn-warning" >Github pages</a>
                             <a href="https://github.com/${this.owner}/${this.prj}/pulls" class="btn btn-primary">Pull requests</a>
-                            <a href="https://github.com/${this.owner}/${this.prj}/actions/workflows/test.yml" class="btn btn-primary">Actions</a>
                         </div>
                     </div>
                 </div>
