@@ -13,5 +13,12 @@
 		"meganrogge.template-string-converter",
 		"cschleiden.vscode-github-actions"
 	],
+	// https://containers.dev/implementors/json_reference/#port-attributes
+	"portsAttributes": {
+		"8080": {
+			"label": "Application",
+			"onAutoForward": "openBrowser"
+		}
+	},
 	"postCreateCommand": "npm install"
 }
