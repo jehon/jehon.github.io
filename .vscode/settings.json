@@ -10,5 +10,9 @@
         "[ ]",
         "[x]"
     ],
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "github-actions.workflows.pinned.workflows": [
+        ".github/workflows/test.yml",
+        "dynamic/pages/pages-build-deployment"
+    ]
 }
