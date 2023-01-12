@@ -181,11 +181,11 @@ class XRepository extends HTMLElement {
                 (this.getAttribute('workflows') ?? 'test')
                     .split(',')
                     .forEach(workflow => {
-                        const src = "https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main";
+                        const src = `https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main`;
                         actionsEl.insertAdjacentHTML('beforeend',
                             `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
-                           <img src='${src}' onerror="this.style.display='none'">
-                        </a>`);
+                               <img src='${src}' onerror="this.style.display='none'">
+                            </a>`);
                         // fetch(src).then(response => response.data)
                     }),
 
