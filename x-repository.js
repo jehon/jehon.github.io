@@ -157,6 +157,19 @@ class XRepository extends HTMLElement {
         setTimeout(() => this.refreshData(), 5 * 60 * 1000);
     }
 
+    async addWorkflowStatus(element, branch) {
+        // https://docs.github.com/en/rest/actions/workflow-runs
+        return octokit.request("GET /repos/{owner}/{repo}/actions/runs?branch={branch}&per_page={per_page}", {
+            owner: this.owner,
+            repo: this.prj,
+            branch: branch,
+            per_page: 5
+        })
+            .then(result => result.data.workflow_runs)
+            // success, canceled, failure
+            .then(runs => runs.map(run => element.insertAdjacentHTML('beforeend', `${run.conclusion}`)))
+    }
+
     async refreshData() {
         this.removeAttribute('warning');
 
@@ -176,107 +189,107 @@ class XRepository extends HTMLElement {
 
         const pagesEl = this.shadowRoot.querySelector('#pages');
 
-        return Promise.all(
-            [
-                (this.getAttribute('workflows') ?? 'test')
-                    .split(',')
-                    .forEach(workflow => {
-                        const src = `https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main`;
-                        actionsEl.insertAdjacentHTML('beforeend',
-                            `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
+        this.workflows = {};
+        return Promise.all([
+            this.addWorkflowStatus(actionsEl, 'main'),
+            (this.getAttribute('workflows') ?? 'test')
+                .split(',')
+                .forEach(workflow => {
+                    const src = `https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main`;
+                    actionsEl.insertAdjacentHTML('beforeend',
+                        `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                                <img src='${src}' onerror="this.style.display='none'">
                             </a>`);
-                        // fetch(src).then(response => response.data)
-                    }),
+                    // fetch(src).then(response => response.data)
+                }),
 
-                octokit.pulls.list({
-                    owner: this.owner,
-                    repo: this.prj
-                })
-                    .then(result => result.data)
-                    .then(data => {
-                        data.map(pr => {
-                            console.log(pr);
+            octokit.pulls.list({
+                owner: this.owner,
+                repo: this.prj
+            })
+                .then(result => result.data)
+                .then(data => {
+                    data.map(pr => {
+                        // console.log(pr);
 
-                            prEl.insertAdjacentHTML('beforeend', `
+                        prEl.insertAdjacentHTML('beforeend', `
                                 <div branch='${pr.branch}'>
                                     <a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a>
-                                    ${pr.head.ref}
                                 </div>
                             `);
-
-                            // https://docs.github.com/en/rest/actions/workflow-runs?apiVersion=2022-11-28
-                        })
-                        if (data.length > 0) {
-                            this.lightWarning('pr');
-                        }
-                        return data;
+                        this.addWorkflowStatus(peEl.querySelector('[branch]', pr.head.ref));
                     })
-                    .then(data => data.map(pr => pr.head.ref))
-                    .then(branchesInPr =>
-                        octokit.request('GET /repos/{owner}/{repo}/branches', {
-                            owner: this.owner,
-                            repo: this.prj
-                        })
-                            .then(result => result.data)
-                            // .then(data => Array.isArray(data) ? data : [])
-                            .then(data => data.map(br => br.name))
-                            .then(branches => {
-                                if (branches.includes('gh-pages')) {
-                                    pagesEl.removeAttribute('hidden');
-                                } else {
-                                    pagesEl.setAttribute('hidden', 'hidden');
-                                }
-                                return branches;
-                            })
-                            .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
-                            .then(branches => branches.map(br => {
-                                // console.log(branches);
-                                branchesEl.innerHTML += `<div>${br}</div>`
-                            }))
-                    )
-                    .catch(() => true), // TODO: not clean
-
-                // octokit.request("GET /repos/{owner}/{repo}/codespaces", {
-                //     owner: this.owner,
-                //     repo: this.prj
-                // })
-                //     .then(result => result.data)
-                //     .then(data => {
-                //         data.codespaces.map(cd => codespacesEl.insertAdjacentHTML('beforeend', `<a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>`));
-                //         //     if (data.codespaces.length <= 0) {
-                //         //         // Codespaces:
-                //         //         //   None is found, we propose to create one:
-                //         //         //
-                //         //         //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
-                //         //         //
-                //         //         codespacesEl.insertAdjacentHTML('beforeend', `
-                //         //     <a class="btn btn-warning">New!</a>
-                //         // `);
-                //         //     codespacesEl.querySelector('a').addEventListener('click', () => {
-                //         //         octokit.request('POST /user/codespaces', {
-                //         //             repository_id: 1,
-                //         //             ref: 'main',
-                //         //             location: 'WestUs2'
-                //         //         }).then(data => {
-                //         //             console.log("Created here: ", data.web_url);
-                //         //         })
-
-                //         //     })
-                //         // }
-                //     })
-                //     .catch(() => true), // TODO: not clean
-
-                Promise.resolve()
-                    .then(() => {
-                        if (npm) {
-                            return fetch(`https://registry.npmjs.org/${npm}`)
-                                .then(response => response.json())
-                                .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
-                        }
+                    if (data.length > 0) {
+                        this.lightWarning('pr');
+                    }
+                    return data;
+                })
+                .then(data => data.map(pr => pr.head.ref))
+                .then(branchesInPr =>
+                    octokit.request('GET /repos/{owner}/{repo}/branches', {
+                        owner: this.owner,
+                        repo: this.prj
                     })
-                    .catch(() => true), // TODO: not clean
-            ]);
+                        .then(result => result.data)
+                        // .then(data => Array.isArray(data) ? data : [])
+                        .then(data => data.map(br => br.name))
+                        .then(branches => {
+                            if (branches.includes('gh-pages')) {
+                                pagesEl.removeAttribute('hidden');
+                            } else {
+                                pagesEl.setAttribute('hidden', 'hidden');
+                            }
+                            return branches;
+                        })
+                        .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
+                        .then(branches => branches.map(br => {
+                            // console.log(branches);
+                            branchesEl.innerHTML += `<div>${br}</div>`
+                        }))
+                )
+                .catch(() => true), // TODO: not clean
+
+            // octokit.request("GET /repos/{owner}/{repo}/codespaces", {
+            //     owner: this.owner,
+            //     repo: this.prj
+            // })
+            //     .then(result => result.data)
+            //     .then(data => {
+            //         data.codespaces.map(cd => codespacesEl.insertAdjacentHTML('beforeend', `<a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>`));
+            //         //     if (data.codespaces.length <= 0) {
+            //         //         // Codespaces:
+            //         //         //   None is found, we propose to create one:
+            //         //         //
+            //         //         //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
+            //         //         //
+            //         //         codespacesEl.insertAdjacentHTML('beforeend', `
+            //         //     <a class="btn btn-warning">New!</a>
+            //         // `);
+            //         //     codespacesEl.querySelector('a').addEventListener('click', () => {
+            //         //         octokit.request('POST /user/codespaces', {
+            //         //             repository_id: 1,
+            //         //             ref: 'main',
+            //         //             location: 'WestUs2'
+            //         //         }).then(data => {
+            //         //             console.log("Created here: ", data.web_url);
+            //         //         })
+
+            //         //     })
+            //         // }
+            //     })
+            //     .catch(() => true), // TODO: not clean
+
+            Promise.resolve()
+                .then(() => {
+                    if (npm) {
+                        return fetch(`https://registry.npmjs.org/${npm}`)
+                            .then(response => response.json())
+                            .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                    }
+                })
+                .catch(() => true), // TODO: not clean
+        ]
+        );
     }
 }
 
