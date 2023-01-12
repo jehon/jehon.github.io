@@ -1,12 +1,11 @@
 {
 	"name": "Node.js",
-	"image": "mcr.microsoft.com/devcontainers/javascript-node",
+	"image": "node:lts",
 	"features": {},
 	"settings": {},
 	"extensions": [
 		"ritwickdey.liveserver",
 		"dbaeumer.vscode-eslint",
-		"nobuhito.printcode",
 		"ecmel.vscode-html-css",
 		"gruntfuggly.todo-tree",
 		"mkaufman.htmlhint",
@@ -20,5 +19,5 @@
 			"onAutoForward": "openBrowserOnce"
 		}
 	},
-	"postCreateCommand": "npm install"
+	"postCreateCommand": "npm ci"
 }

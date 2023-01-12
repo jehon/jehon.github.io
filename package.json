@@ -21,6 +21,6 @@
   "scripts": {
     "start": "http-server --port 8080",
     "lint": "eslint && htmlhint",
-    "test": "npm run lint"
+    "test": "eslint && htmlhint"
   }
 }

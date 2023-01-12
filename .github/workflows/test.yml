@@ -17,9 +17,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
     - uses: actions/checkout@v3
-    - run: npm ci
-    - run: npm run test
+
+    - name: Start devcontainer
+      uses: jehon/actions-devcontainer@main
+      with:
+        action: start
+
+    - name: npm ci
+      uses: jehon/actions-devcontainer@main
+      with:
+        run: npm ci
+    
+    - name: npm test
+      uses: jehon/actions-devcontainer@main
+      with:
+        run: npm test
