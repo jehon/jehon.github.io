@@ -196,34 +196,16 @@ class XRepository extends HTMLElement {
                     .then(result => result.data)
                     .then(data => {
                         data.map(pr => {
-                            // console.log(pr);
+                            console.log(pr);
 
-                            // https://api.github.com/repos/${this.owner}/kiosk/pulls/620/commits
-                            // => parents.0.url => + /status
-                            // => https://api.github.com/repos/${this.owner}/kiosk/commits/771b2184adaf85853901515bf1edb2875df3ab11/status
-                            //   => .status
+                            prEl.insertAdjacentHTML('beforeend', `
+                                <div branch='${pr.branch}'>
+                                    <a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a>
+                                    ${pr.head.ref}
+                                </div>
+                            `);
 
-                            // cryptomedic.811:
-                            //                     head.sha
-                            //                     722fe1ebb17c61ac0b09e4ea5a2740f340728a85
-
-                            // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
-
-                            // https://api.github.com/repos/:owner/:repo/commits/:ref/statuses
-
-                            // Thanks to: https://stackoverflow.com/a/29449704/1954789 
-                            // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/statuses
-                            // https://api.github.com/repos/${this.owner}/cryptomedic/commits/722fe1ebb17c61ac0b09e4ea5a2740f340728a85/status
-
-                            // Ref: https://docs.github.com/en/rest/reference/repos#statuses
-                            //   status => agglomerated
-                            //   statuses => what ? protected ?
-
-                            // TODO: prEl.statuses_url <= make api request to get status!
-
-                            // octokit.request("GET " + pr.statuses_url).then(result => result.data).then(data => console.log('status', data));
-
-                            prEl.innerHTML += `<div><a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''} #status#</a></div>`;
+                            // https://docs.github.com/en/rest/actions/workflow-runs?apiVersion=2022-11-28
                         })
                         if (data.length > 0) {
                             this.lightWarning('pr');
