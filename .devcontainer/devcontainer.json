@@ -10,14 +10,8 @@
 		"gruntfuggly.todo-tree",
 		"mkaufman.htmlhint",
 		"meganrogge.template-string-converter",
-		"cschleiden.vscode-github-actions"
+		"cschleiden.vscode-github-actions",
+		"ritwickdey.LiveServer"
 	],
-	// https://containers.dev/implementors/json_reference/#port-attributes
-	"portsAttributes": {
-		"8080": {
-			"label": "Application",
-			"onAutoForward": "openBrowserOnce"
-		}
-	},
 	"postCreateCommand": "npm ci"
 }
