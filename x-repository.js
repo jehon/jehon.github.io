@@ -157,13 +157,13 @@ class XRepository extends HTMLElement {
         setTimeout(() => this.refreshData(), 5 * 60 * 1000);
     }
 
-    async addWorkflowStatus(element, branch, path = '') {
+    async getWorkflowStatuses(n, branch, path = '') {
         // https://docs.github.com/en/rest/actions/workflow-runs#list-workflow-runs-for-a-repository
         return octokit.request("GET /repos/{owner}/{repo}/actions/runs?branch={branch}&per_page={per_page}", {
             owner: this.owner,
             repo: this.prj,
             branch: branch,
-            per_page: 10
+            per_page: n
         })
             .then(result => result.data.workflow_runs)
             .then(runs => path ? runs.filter(run => run.path == path) : runs)
@@ -172,7 +172,7 @@ class XRepository extends HTMLElement {
             // success, canceled, failure
             .then(results => { if (results.reduceRight((prev, current) => current == 'canceled' ? prev : current == 'failure', false)) this.lightWarning('runs'); return results; })
             // .then(runs => { if (runs.length > 0 && runs[0].conclusion == 'failure') this.lightWarning('runs'); return runs; })
-            .then(results => results.forEach(result => {
+            .then(results => results.map(result => {
                 let char = '';
                 switch (result) {
                     case 'success': char = '✅'; break;
@@ -180,8 +180,9 @@ class XRepository extends HTMLElement {
                     case 'failure': char = '❌'; break;
                     default: char = result; break;
                 }
-                element.insertAdjacentHTML('beforeend', `${char}`)
+                return char;
             }))
+            .then(chars => chars.join(''))
     }
 
     async refreshData() {
@@ -205,16 +206,15 @@ class XRepository extends HTMLElement {
 
         this.workflows = {};
         return Promise.all([
-            this.addWorkflowStatus(actionsEl, 'main'),
             (this.getAttribute('workflows') ?? 'test')
                 .split(',')
-                .forEach(workflow => {
+                .forEach(async workflow => {
                     const src = `https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main`;
                     actionsEl.insertAdjacentHTML('beforeend',
                         `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                                <img src='${src}' onerror="this.style.display='none'">
+                               ${await this.getWorkflowStatuses(5, 'main', `.github/workflows/${workflow}.yml`)}
                             </a>`);
-                    // fetch(src).then(response => response.data)
                 }),
 
             octokit.pulls.list({
@@ -223,15 +223,15 @@ class XRepository extends HTMLElement {
             })
                 .then(result => result.data)
                 .then(data => {
-                    data.map(pr => {
+                    data.map(async pr => {
                         // console.log(pr);
 
                         prEl.insertAdjacentHTML('beforeend', `
                                 <div branch='${pr.branch}'>
                                     <a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a>
+                                    ${await this.getWorkflowStatuses(2, pr.head.ref)}
                                 </div>
-                            `);
-                        this.addWorkflowStatus(peEl.querySelector('[branch]', pr.head.ref));
+                    `);
                     })
                     if (data.length > 0) {
                         this.lightWarning('pr');
