@@ -157,17 +157,31 @@ class XRepository extends HTMLElement {
         setTimeout(() => this.refreshData(), 5 * 60 * 1000);
     }
 
-    async addWorkflowStatus(element, branch) {
-        // https://docs.github.com/en/rest/actions/workflow-runs
+    async addWorkflowStatus(element, branch, path = '') {
+        // https://docs.github.com/en/rest/actions/workflow-runs#list-workflow-runs-for-a-repository
         return octokit.request("GET /repos/{owner}/{repo}/actions/runs?branch={branch}&per_page={per_page}", {
             owner: this.owner,
             repo: this.prj,
             branch: branch,
-            per_page: 5
+            per_page: 10
         })
             .then(result => result.data.workflow_runs)
+            .then(runs => path ? runs.filter(run => run.path == path) : runs)
+            .then(runs => runs.map(run => run.conclusion))
+            .then(results => results.slice(0, 5))
             // success, canceled, failure
-            .then(runs => runs.map(run => element.insertAdjacentHTML('beforeend', `${run.conclusion}`)))
+            .then(results => { if (results.reduceRight((prev, current) => current == 'canceled' ? prev : current == 'failure', false)) this.lightWarning('runs'); return results; })
+            // .then(runs => { if (runs.length > 0 && runs[0].conclusion == 'failure') this.lightWarning('runs'); return runs; })
+            .then(results => results.forEach(result => {
+                let char = '';
+                switch (result) {
+                    case 'success': char = '✅'; break;
+                    case 'canceled': char = '?'; break;
+                    case 'failure': char = '❌'; break;
+                    default: char = result; break;
+                }
+                element.insertAdjacentHTML('beforeend', `${char}`)
+            }))
     }
 
     async refreshData() {
