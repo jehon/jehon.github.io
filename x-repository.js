@@ -25,13 +25,17 @@ class XRepository extends HTMLElement {
     /** @type {string} the repository*/
     prj;
 
+    /** @type {number} the level of warning */
+    warningLevel = 0;
+
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
     }
 
-    lightWarning(txt = 'warning') {
-        this.setAttribute('warning', txt);
+    lightWarning(level = 1, txt = 'warning') {
+        this.warningLevel = Math.max(this.warningLevel, level);
+        this.setAttribute(`warning-${this.warningLevel}`, txt);
     }
 
     connectedCallback() {
@@ -55,7 +59,15 @@ class XRepository extends HTMLElement {
                     margin: 20px;
                 }
 
-                :host([warning]) {
+                :host([warning-1]) {
+                    background-color: #807f7e;
+                }
+
+                :host([warning-2]) {
+                    background-color: #F5EF7D;
+                }
+
+                :host([warning-3]) {
                     background-color: #C95C00;
                 }
 
@@ -170,8 +182,10 @@ class XRepository extends HTMLElement {
             .then(runs => runs.map(run => run.conclusion))
             .then(results => results.slice(0, 5))
             // success, canceled, failure
-            .then(results => { if (results.reduceRight((prev, current) => current == 'canceled' ? prev : current == 'failure', false)) this.lightWarning('runs'); return results; })
-            // .then(runs => { if (runs.length > 0 && runs[0].conclusion == 'failure') this.lightWarning('runs'); return runs; })
+            .then(results => {
+                if (results.reduceRight((prev, current) => current == 'canceled' ? prev : current == 'failure', false))
+                    this.lightWarning((branch == 'main') ? 3 : 2, 'runs'); return results;
+            })
             .then(results => results.map(result => {
                 let char = '';
                 switch (result) {
@@ -213,8 +227,8 @@ class XRepository extends HTMLElement {
                     actionsEl.insertAdjacentHTML('beforeend',
                         `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                                <img src='${src}' onerror="this.style.display='none'">
-                               ${await this.getWorkflowStatuses(5, 'main', `.github/workflows/${workflow}.yml`)}
                             </a>`);
+                    await this.getWorkflowStatuses(3, 'main', `.github/workflows/${workflow}.yml`);
                 }),
 
             octokit.pulls.list({
@@ -229,12 +243,12 @@ class XRepository extends HTMLElement {
                         prEl.insertAdjacentHTML('beforeend', `
                                 <div branch='${pr.branch}'>
                                     <a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a>
-                                    ${await this.getWorkflowStatuses(2, pr.head.ref)}
+                                    ${await this.getWorkflowStatuses(1, pr.head.ref)}
                                 </div>
                     `);
                     })
                     if (data.length > 0) {
-                        this.lightWarning('pr');
+                        this.lightWarning(1, 'pr');
                     }
                     return data;
                 })
