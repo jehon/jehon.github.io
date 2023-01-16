@@ -201,6 +201,7 @@ class XRepository extends HTMLElement {
 
     async refreshData() {
         this.removeAttribute('warning');
+        this.warningLevel = 0;
 
         const npm = this.getAttribute('npm');
 
