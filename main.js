@@ -1,4 +1,4 @@
 
-import "x-repository.js";
-import "x-img.js";
+import "./x-repository.js";
+import "./x-img.js";
 
