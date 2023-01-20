@@ -59,15 +59,15 @@ class XRepository extends HTMLElement {
                     margin: 20px;
                 }
 
-                :host([warning=1]) {
+                :host([warning="1"]) {
                     background-color: #807f7e;
                 }
 
-                :host([warning=2]) {
+                :host([warning="2"]) {
                     background-color: #F5EF7D;
                 }
 
-                :host([warning=3]) {
+                :host([warning="3"]) {
                     background-color: #C95C00;
                 }
 
