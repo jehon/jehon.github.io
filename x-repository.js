@@ -33,9 +33,9 @@ class XRepository extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
-    lightWarning(level = 1, txt = 'warning') {
+    lightWarning(level = 1, _txt = 'warning') {
         this.warningLevel = Math.max(this.warningLevel, level);
-        this.setAttribute(`warning-${this.warningLevel}`, txt);
+        this.setAttribute('warning', level);
     }
 
     connectedCallback() {
@@ -59,15 +59,15 @@ class XRepository extends HTMLElement {
                     margin: 20px;
                 }
 
-                :host([warning-1]) {
+                :host([warning=1]) {
                     background-color: #807f7e;
                 }
 
-                :host([warning-2]) {
+                :host([warning=2]) {
                     background-color: #F5EF7D;
                 }
 
-                :host([warning-3]) {
+                :host([warning=3]) {
                     background-color: #C95C00;
                 }
 
@@ -202,6 +202,7 @@ class XRepository extends HTMLElement {
     async refreshData() {
         this.removeAttribute('warning');
         this.warningLevel = 0;
+        this.lightWarning(0);
 
         const npm = this.getAttribute('npm');
 
