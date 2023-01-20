@@ -166,7 +166,6 @@ class XRepository extends HTMLElement {
         // )
 
         this.refreshData();
-        setTimeout(() => this.refreshData(), 5 * 60 * 1000);
     }
 
     async getWorkflowStatuses(n, branch, path = '') {
