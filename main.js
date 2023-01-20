@@ -9,6 +9,8 @@ export async function refresh() {
     }
     refreshCron = setTimeout(() => refresh(), 5 * 60 * 1000);
 
+    document.querySelector('#timestamp').innerHTML = (new Date()).toTimeString().split(' ')[0];
+
     return Promise.all(Array.from(document.querySelectorAll('x-repository')).map(el => el.refreshData()));
 }
 
