@@ -28,7 +28,7 @@
 
     .img-grid {
       width: 100%;
-      height: 150px;
+      height: 100px;
 
       display: flex;
       flex-direction: row;
@@ -75,10 +75,16 @@
       src="https://upload.wikimedia.org/wikipedia/commons/8/80/Circle-icons-music.svg"></x-img>
     <x-img legend="Music@Piscine" link="http://{{http.piscine}}:8800/"
       src="https://upload.wikimedia.org/wikipedia/commons/8/80/Circle-icons-music.svg"></x-img>
-    <x-img legend="Jenkins" link="http://{{http.dev}}:2345/"
-      src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Jenkins_logo.svg"></x-img>
-    <x-img legend="Portainer" link="http://{{http.dev}}:9000/"
+  </div>
+  <div class="img-grid">
+    <x-img legend="Dashboard" link="http://{{http.dev}}/dashboard/"
+      src="https://raw.githubusercontent.com/traefik/traefik/master/docs/content/assets/img/traefik.logo.png"></x-img>
+    <x-img legend="Portainer" link="http://{{http.dev}}/portainer/"
       src="https://avatars.githubusercontent.com/u/22225832"></x-img>
+    <x-img legend="Mail" link="http://{{http.dev}}/mail/"
+      src="https://raw.githubusercontent.com/maildev/maildev/master/app/favicon.ico"></x-img>
+    <x-img legend="Jenkins" link="http://{{http.dev}}/jenkins/"
+      src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Jenkins_logo.svg"></x-img>
   </div>
 
   <x-github-auth>
