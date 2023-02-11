@@ -1,10 +1,6 @@
 
-const config = await fetch("http://localhost/built/dev-config.json")
+const config = await fetch("devstack/dev-config.json")
     .then(response => response.json())
-    .catch(
-        () => fetch("https://jehon.github.io/packages/dev-config.json")
-        .then(response => response.json())
-    )
 
 export default config;
 
