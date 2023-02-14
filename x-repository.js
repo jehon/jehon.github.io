@@ -54,9 +54,8 @@ class XRepository extends HTMLElement {
                     width: 100%;
                 }
 
-                :host(*) > * {
-                    width: 100%;
-                    margin: 20px;
+                :host([running]) {
+                    background-color: lightgray;
                 }
 
                 :host([warning="1"]) {
@@ -74,7 +73,12 @@ class XRepository extends HTMLElement {
                 :host([no-badge]) #badge {
                     display: none;
                 }
-                
+
+                :host(*) > * {
+                    width: 100%;
+                    margin: 20px;
+                }
+
                 [hidden] {
                     display: none
                 }
@@ -197,6 +201,8 @@ class XRepository extends HTMLElement {
     }
 
     async refreshData() {
+        this.setAttribute('running', 'running');
+
         this.removeAttribute('warning');
         this.warningLevel = 0;
         this.lightWarning(0);
@@ -316,7 +322,10 @@ class XRepository extends HTMLElement {
                 })
                 .catch(() => true), // TODO: not clean
         ]
-        );
+        ).then(data => {
+            this.removeAttribute('running');
+            return data;
+        });
     }
 }
 
