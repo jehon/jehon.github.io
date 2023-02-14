@@ -1,5 +1,4 @@
 
-
 import octokit from './x-github-auth.js'
 
 //
@@ -148,7 +147,7 @@ class XRepository extends HTMLElement {
                             <slot></slot>
                         </div>
                         <div id='actions'>
-                            <span id='npm'></span>
+                            <span id='version'></span>
                             <a id='pages' hidden href="https://jehon.github.io/${this.prj}" class="btn btn-warning" >Github pages</a>
                             <a href="https://github.com/${this.owner}/${this.prj}/pulls" class="btn btn-primary">Pull requests</a>
                         </div>
@@ -220,7 +219,11 @@ class XRepository extends HTMLElement {
         this.warningLevel = 0;
         this.lightWarning(0);
 
+        const versionEl = this.shadowRoot.querySelector('#version');
+        versionEl.innerHTML = "";
+
         const npm = this.getAttribute('npm');
+        const versionUrl = this.getAttribute('version-url');
 
         const actionsEl = this.shadowRoot.querySelector('#badge');
         actionsEl.innerHTML = '';
@@ -330,7 +333,11 @@ class XRepository extends HTMLElement {
                     if (npm) {
                         return fetch(`https://registry.npmjs.org/${npm}`)
                             .then(response => response.json())
-                            .then(json => this.shadowRoot.querySelector('#npm').innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                            .then(json => versionEl.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                    } else if (versionUrl) {
+                        return fetch(versionUrl)
+                            .then(response => response.text())
+                            .then(text => versionEl.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
                     }
                 })
                 .catch(() => true), // TODO: not clean
