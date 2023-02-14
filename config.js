@@ -1,6 +1,6 @@
 
 const config = await fetch("devstack/dev-config.json")
-    .then(response => response.json())
+    .then(response => response.json(), () => null)
 
 export default config;
 
