@@ -55,7 +55,14 @@ class XRepository extends HTMLElement {
                 }
 
                 :host([running]) {
-                    background-color: lightgray;
+                    /* thanks to: https://css-tricks.com/stripes-css/ */
+                    background: repeating-linear-gradient(
+                            135deg,
+                            rgba(255, 153, 0, 0.4),
+                            rgba(255, 153, 0, 0.4) 10px,
+                            rgba(0, 0, 0, 0.4) 10px,
+                            rgba(0, 0, 0, 0.4) 20px
+                        )
                 }
 
                 :host([warning="1"]) {
