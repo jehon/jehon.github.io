@@ -168,6 +168,8 @@ class XRepository extends HTMLElement {
         //         })
         //     }
         // )
+
+        this.refreshData()
     }
 
     async getWorkflowStatuses(n, branch, path = '') {
@@ -201,6 +203,10 @@ class XRepository extends HTMLElement {
     }
 
     async refreshData() {
+        if (this.hasAttribute('running')) {
+            console.log("Already running", this.prj);
+            return ;
+        }
         this.setAttribute('running', 'running');
 
         this.removeAttribute('warning');
