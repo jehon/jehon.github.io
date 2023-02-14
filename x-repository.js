@@ -164,8 +164,6 @@ class XRepository extends HTMLElement {
         //         })
         //     }
         // )
-
-        this.refreshData();
     }
 
     async getWorkflowStatuses(n, branch, path = '') {
