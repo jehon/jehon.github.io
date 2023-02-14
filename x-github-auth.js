@@ -59,7 +59,9 @@ class XGithubAuth extends HTMLElement {
 
     connectedCallback() {
         this.attachShadow({ mode: 'open' });
-        if (!getToken()) {
+        if (getToken()) {
+            this.shadowRoot.innerHTML = '<slot></slot>'
+        } else {
             // We need to authenticate!
             this.shadowRoot.innerHTML = `
                 <style>
