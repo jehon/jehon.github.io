@@ -27,7 +27,7 @@ const ockokitAuthConfig = {
     //    auth: getToken()
 }
 
-const octokit = new (Octokit.plugin(throttling).plugin(retry))({
+export const octokit = new (Octokit.plugin(throttling).plugin(retry))({
     ...(getToken() ? ockokitAuthConfig : {}),
     throttle: {
         onRateLimit: (retryAfter, options) => {
@@ -50,7 +50,6 @@ const octokit = new (Octokit.plugin(throttling).plugin(retry))({
     },
     userAgent: "jehon personal dashboard",
 });
-export default octokit;
 
 class XGithubAuth extends HTMLElement {
     static get tag() {
