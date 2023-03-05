@@ -1,5 +1,5 @@
 
-import octokit from './x-github-auth.js'
+import { octokit } from './x-github-auth.js'
 
 //
 // https://docs.github.com/en/rest/reference/repos#statuses
