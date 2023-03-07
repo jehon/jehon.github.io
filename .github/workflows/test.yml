@@ -18,17 +18,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Start devcontainer
-      uses: jehon/actions-devcontainer@main
+    - uses: devcontainers/ci@v0.3
       with:
-        action: start
-
-    - name: npm ci
-      uses: jehon/actions-devcontainer@main
-      with:
-        run: npm ci
+        runCmd: npm ci
     
-    - name: npm test
-      uses: jehon/actions-devcontainer@main
+    - uses: devcontainers/ci@v0.3
       with:
-        run: npm test
+        runCmd: npm test
