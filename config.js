@@ -1,8 +1,15 @@
 
-const config = await fetch("devstack/dev-config.json")
-    .then(response => response.json(), () => null)
+const config = {};
 
-export default config;
+try {
+    Object.assign(config, await fetch("devstack/dev-config.json")
+        .then(response => response.json(), () => null)
+        );
+} catch(_e) {
+    // ok
+}
+
+// export default config;
 
 // Thanks to https://stackoverflow.com/a/56253298/1954789
 function flattenObj(obj, parent, res = {}) {
@@ -16,8 +23,7 @@ function flattenObj(obj, parent, res = {}) {
     }
     return res;
 }
-
-export const flattenConfig = flattenObj(config);
+const flattenConfig = flattenObj(config);
 
 export const inject = (string) => string.replace(
     /\{\{([0-9a-zA-Z_.]+)\}\}/g,
