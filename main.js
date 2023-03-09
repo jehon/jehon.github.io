@@ -20,3 +20,8 @@ document.refresh = refresh;
 refresh();
 
 timestampEl.addEventListener('click', () => refresh());
+
+document.querySelectorAll('[copy-to-clipboard]').forEach(e => e.addEventListener("click", e => {
+    const txt = e.target.innerHTML;
+    navigator.clipboard.writeText(txt);
+}));
