@@ -3,6 +3,11 @@ import "./x-repository.js";
 import "./x-img.js";
 
 const timestampEl = document.querySelector('#timestamp');
+const timeUTCEl = document.querySelector('#time');
+
+setInterval(() => {
+    timeUTCEl.innerHTML = (new Date()).toISOString();
+}, 1000);
 
 let refreshCron = 0;
 export async function refresh() {
