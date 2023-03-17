@@ -6,7 +6,7 @@ const timestampEl = document.querySelector('#timestamp');
 const timeUTCEl = document.querySelector('#time');
 
 setInterval(() => {
-    timeUTCEl.innerHTML = (new Date()).toISOString();
+    timeUTCEl.innerHTML = (new Date()).toISOString().substring(11, 19) + " UTC";
 }, 1000);
 
 let refreshCron = 0;
