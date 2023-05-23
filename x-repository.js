@@ -127,8 +127,7 @@ class XRepository extends HTMLElement {
                 
             </style>
             <div class="card">
-                <div class="card-header">
-                    <a class="card-link" href='https://github.com/${this.owner}/${this.prj}'>${this.prj}</a>
+                <div class="card-header" id="github-badge">
                 </div>
                 <div class="card-body">
                     <div class="card-text">
@@ -155,6 +154,10 @@ class XRepository extends HTMLElement {
                 </div>
             </div >
     `;
+
+    this.el = Object.freeze({
+        githubBadgeEl: this.shadowRoot.querySelector('#github-badge'),
+    });
 
         // Problem: CORS
 
@@ -224,6 +227,9 @@ class XRepository extends HTMLElement {
 
         const npm = this.getAttribute('npm');
         const versionUrl = this.getAttribute('version-url');
+        const ts = new Date().getTime();
+
+        this.el.githubBadgeEl.innerHTML = `<a class="card-link" href='https://github.com/${this.owner}/${this.prj}?${ts}'>${this.prj}</a>`
 
         const actionsEl = this.shadowRoot.querySelector('#badge');
         actionsEl.innerHTML = '';
