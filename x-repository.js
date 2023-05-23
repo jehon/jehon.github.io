@@ -157,6 +157,7 @@ class XRepository extends HTMLElement {
 
     this.el = Object.freeze({
         githubBadgeEl: this.shadowRoot.querySelector('#github-badge'),
+        versionEl: this.shadowRoot.querySelector('#version')
     });
 
         // Problem: CORS
@@ -222,14 +223,12 @@ class XRepository extends HTMLElement {
         this.warningLevel = 0;
         this.lightWarning(0);
 
-        const versionEl = this.shadowRoot.querySelector('#version');
-        versionEl.innerHTML = "";
-
         const npm = this.getAttribute('npm');
         const versionUrl = this.getAttribute('version-url');
         const ts = new Date().getTime();
 
         this.el.githubBadgeEl.innerHTML = `<a class="card-link" href='https://github.com/${this.owner}/${this.prj}?${ts}'>${this.prj}</a>`
+        this.el.versionEl.innerHTML = "";
 
         const actionsEl = this.shadowRoot.querySelector('#badge');
         actionsEl.innerHTML = '';
@@ -339,11 +338,11 @@ class XRepository extends HTMLElement {
                     if (npm) {
                         return fetch(`https://registry.npmjs.org/${npm}`)
                             .then(response => response.json())
-                            .then(json => versionEl.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                            .then(json => this.el.versionEl.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
                     } else if (versionUrl) {
                         return fetch(versionUrl)
                             .then(response => response.text())
-                            .then(text => versionEl.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
+                            .then(text => this.el.versionEl.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
                     }
                 })
                 .catch(() => true), // TODO: not clean
