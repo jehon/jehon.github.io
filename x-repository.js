@@ -156,8 +156,13 @@ class XRepository extends HTMLElement {
     `;
 
     this.el = Object.freeze({
-        githubBadgeEl: this.shadowRoot.querySelector('#github-badge'),
-        versionEl: this.shadowRoot.querySelector('#version')
+        githubBadge: this.shadowRoot.querySelector('#github-badge'),
+        version: this.shadowRoot.querySelector('#version'),
+        actions: this.shadowRoot.querySelector('#badge'),
+        pr: this.shadowRoot.querySelector('#pr'),
+        branches: this.shadowRoot.querySelector('#branches'),
+        codespaces: this.shadowRoot.querySelector('#codespaces'),
+        pages: this.shadowRoot.querySelector('#pages')
     });
 
         // Problem: CORS
@@ -227,22 +232,12 @@ class XRepository extends HTMLElement {
         const versionUrl = this.getAttribute('version-url');
         const ts = new Date().getTime();
 
-        this.el.githubBadgeEl.innerHTML = `<a class="card-link" href='https://github.com/${this.owner}/${this.prj}?${ts}'>${this.prj}</a>`
-        this.el.versionEl.innerHTML = "";
-
-        const actionsEl = this.shadowRoot.querySelector('#badge');
-        actionsEl.innerHTML = '';
-
-        const prEl = this.shadowRoot.querySelector('#pr');
-        prEl.innerHTML = '';
-
-        const branchesEl = this.shadowRoot.querySelector('#branches');
-        branchesEl.innerHTML = '';
-
-        const codespacesEl = this.shadowRoot.querySelector('#codespaces');
-        codespacesEl.innerHTML = '';
-
-        const pagesEl = this.shadowRoot.querySelector('#pages');
+        this.el.githubBadge.innerHTML = `<a class="card-link" href='https://github.com/${this.owner}/${this.prj}?${ts}'>${this.prj}</a>`
+        this.el.version.innerHTML = "";
+        this.el.actions.innerHTML = '';
+        this.el.pr.innerHTML = '';
+        this.el.branches.innerHTML = '';
+        this.el.codespaces.innerHTML = '';
 
         this.workflows = {};
         return Promise.all([
@@ -250,7 +245,7 @@ class XRepository extends HTMLElement {
                 .split(',')
                 .forEach(async workflow => {
                     const src = `https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main`;
-                    actionsEl.insertAdjacentHTML('beforeend',
+                    this.el.actions.insertAdjacentHTML('beforeend',
                         `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                                <img src='${src}' onerror="this.style.display='none'">
                             </a>`);
@@ -266,7 +261,7 @@ class XRepository extends HTMLElement {
                     data.map(async pr => {
                         // console.log(pr);
 
-                        prEl.insertAdjacentHTML('beforeend', `
+                        this.el.pr.insertAdjacentHTML('beforeend', `
                                 <div branch='${pr.branch}'>
                                     <a href='${pr.html_url ?? ''}'>PR: ${pr.user?.login ?? ''} - ${pr.title ?? ''}</a>
                                     ${await this.getWorkflowStatuses(1, pr.head.ref)}
@@ -289,16 +284,16 @@ class XRepository extends HTMLElement {
                         .then(data => data.map(br => br.name))
                         .then(branches => {
                             if (branches.includes('gh-pages')) {
-                                pagesEl.removeAttribute('hidden');
+                                this.el.pages.removeAttribute('hidden');
                             } else {
-                                pagesEl.setAttribute('hidden', 'hidden');
+                                this.el.pages.setAttribute('hidden', 'hidden');
                             }
                             return branches;
                         })
                         .then(branches => branches.filter(br => !branchesInPr.includes(br) && br != "main" && br != 'gh-pages'))
                         .then(branches => branches.map(br => {
                             // console.log(branches);
-                            branchesEl.innerHTML += `<div>${br}</div>`
+                            this.el.branches.innerHTML += `<div>${br}</div>`
                         }))
                 )
                 .catch(() => true), // TODO: not clean
@@ -309,17 +304,17 @@ class XRepository extends HTMLElement {
             // })
             //     .then(result => result.data)
             //     .then(data => {
-            //         data.codespaces.map(cd => codespacesEl.insertAdjacentHTML('beforeend', `<a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>`));
+            //         data.codespaces.map(cd => this.el.codespaces.insertAdjacentHTML('beforeend', `<a href="${cd.web_url}" class="btn btn-success">${cd.pulls_url ?? 'main'}</a>`));
             //         //     if (data.codespaces.length <= 0) {
             //         //         // Codespaces:
             //         //         //   None is found, we propose to create one:
             //         //         //
             //         //         //   see https://docs.github.com/en/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user
             //         //         //
-            //         //         codespacesEl.insertAdjacentHTML('beforeend', `
+            //         //         this.el.codespaces.insertAdjacentHTML('beforeend', `
             //         //     <a class="btn btn-warning">New!</a>
             //         // `);
-            //         //     codespacesEl.querySelector('a').addEventListener('click', () => {
+            //         //     this.el.codespaces.querySelector('a').addEventListener('click', () => {
             //         //         octokit.request('POST /user/codespaces', {
             //         //             repository_id: 1,
             //         //             ref: 'main',
@@ -338,11 +333,11 @@ class XRepository extends HTMLElement {
                     if (npm) {
                         return fetch(`https://registry.npmjs.org/${npm}`)
                             .then(response => response.json())
-                            .then(json => this.el.versionEl.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                            .then(json => this.el.version.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
                     } else if (versionUrl) {
                         return fetch(versionUrl)
                             .then(response => response.text())
-                            .then(text => this.el.versionEl.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
+                            .then(text => this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
                     }
                 })
                 .catch(() => true), // TODO: not clean
