@@ -1,13 +1,12 @@
-
 import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
 import { createTokenAuth } from "https://cdn.skypack.dev/@octokit/auth-token";
 import { throttling } from "https://cdn.skypack.dev/@octokit/plugin-throttling";
 import { retry } from "https://cdn.skypack.dev/@octokit/plugin-retry";
 
-const tokenHolder = 'jhDevToken';
+const tokenHolder = "jhDevToken";
 
 function getToken() {
-    return localStorage[tokenHolder] ?? '';
+  return localStorage[tokenHolder] ?? "";
 }
 
 //
@@ -23,46 +22,52 @@ function getToken() {
 //
 
 const ockokitAuthConfig = {
-    authStrategy: () => createTokenAuth(getToken()),
-    //    auth: getToken()
-}
+  authStrategy: () => createTokenAuth(getToken()),
+  //    auth: getToken()
+};
 
 export const octokit = new (Octokit.plugin(throttling).plugin(retry))({
-    ...(getToken() ? ockokitAuthConfig : {}),
-    throttle: {
-        onRateLimit: (retryAfter, options) => {
-            octokit.log.warn(
-                `Request quota exhausted for request ${options.method} ${options.url}`
-            );
+  ...(getToken() ? ockokitAuthConfig : {}),
+  throttle: {
+    onRateLimit: (retryAfter, options) => {
+      octokit.log.warn(
+        `Request quota exhausted for request ${options.method} ${options.url}`
+      );
 
-            if (options.request.retryCount === 0) {
-                // only retries once
-                octokit.log.info(`Retrying after ${retryAfter} seconds!`);
-                return true;
-            }
-        },
-        onAbuseLimit: (retryAfter, options) => {
-            // does not retry, only logs a warning
-            octokit.log.warn(
-                `Abuse detected for request ${options.method} ${options.url}`
-            );
-        }
+      if (options.request.retryCount === 0) {
+        // only retries once
+        octokit.log.info(`Retrying after ${retryAfter} seconds!`);
+        return true;
+      }
     },
-    userAgent: "jehon personal dashboard",
+    onSecondaryRateLimit: (retryAfter, options) => {
+      // does not retry, only logs a warning
+      octokit.log.warn(
+        `Secondary rate limit detected for request ${options.method} ${options.url}`
+      );
+    },
+    onAbuseLimit: (retryAfter, options) => {
+      // does not retry, only logs a warning
+      octokit.log.warn(
+        `Abuse detected for request ${options.method} ${options.url}`
+      );
+    },
+  },
+  userAgent: "jehon personal dashboard",
 });
 
 class XGithubAuth extends HTMLElement {
-    static get tag() {
-        return "x-github-auth";
-    }
+  static get tag() {
+    return "x-github-auth";
+  }
 
-    connectedCallback() {
-        this.attachShadow({ mode: 'open' });
-        if (getToken()) {
-            this.shadowRoot.innerHTML = '<slot></slot>'
-        } else {
-            // We need to authenticate!
-            this.shadowRoot.innerHTML = `
+  connectedCallback() {
+    this.attachShadow({ mode: "open" });
+    if (getToken()) {
+      this.shadowRoot.innerHTML = "<slot></slot>";
+    } else {
+      // We need to authenticate!
+      this.shadowRoot.innerHTML = `
                 <style>
                     ${XGithubAuth.tag} {
                         display: block;
@@ -73,15 +78,15 @@ class XGithubAuth extends HTMLElement {
                     <input name='token'>
                 </div>
             `;
-            const input = this.shadowRoot.querySelector('[name=token]');
-            input.addEventListener('change', () => {
-                const v = input.value.trim();
-                if (v) {
-                    localStorage[tokenHolder] = v;
-                    this.shadowRoot.innerHTML = 'Token loaded, please reload the page';
-                }
-            });
+      const input = this.shadowRoot.querySelector("[name=token]");
+      input.addEventListener("change", () => {
+        const v = input.value.trim();
+        if (v) {
+          localStorage[tokenHolder] = v;
+          this.shadowRoot.innerHTML = "Token loaded, please reload the page";
         }
+      });
     }
+  }
 }
 customElements.define(XGithubAuth.tag, XGithubAuth);
