@@ -126,7 +126,7 @@ class XRepository extends HTMLElement {
                 
             </style>
             <div class="card">
-                <div class="card-header" id="github-badge">
+                <div class="card-header" id="header">
                 </div>
                 <div class="card-body">
                     <div class="card-text">
@@ -155,7 +155,7 @@ class XRepository extends HTMLElement {
     `;
 
     this.el = Object.freeze({
-      githubBadge: this.shadowRoot.querySelector("#github-badge"),
+      header: this.shadowRoot.querySelector("#header"),
       version: this.shadowRoot.querySelector("#version"),
       actions: this.shadowRoot.querySelector("#badge"),
       pr: this.shadowRoot.querySelector("#pr"),
@@ -254,7 +254,7 @@ class XRepository extends HTMLElement {
     const versionUrl = this.getAttribute("version-url");
     const ts = new Date().getTime();
 
-    this.el.githubBadge.innerHTML = `<a class="card-link" href='https://github.com/${this.owner}/${this.prj}'>${this.prj}</a>`;
+    this.el.header.innerHTML = `<a class="card-link" href='https://github.com/${this.owner}/${this.prj}'>${this.prj}</a>`;
     this.el.version.innerHTML = "";
     this.el.actions.innerHTML = "";
     this.el.pr.innerHTML = "";
