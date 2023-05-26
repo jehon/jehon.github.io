@@ -263,24 +263,25 @@ class XRepository extends HTMLElement {
 
     this.workflows = {};
     return Promise.all([
-      (this.getAttribute("workflows") ?? "test")
-        .split(",")
-        .forEach(async (workflow) => {
-          this.el.badge.insertAdjacentHTML(
-            "beforeend",
-            `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
+      this.hasAttribute("no-badge") ||
+        (this.getAttribute("workflows") ?? "test")
+          .split(",")
+          .forEach(async (workflow) => {
+            this.el.badge.insertAdjacentHTML(
+              "beforeend",
+              `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                 <img 
                     src='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main&ts=${ts}' 
                     onerror="this.style.display='none'"
                 >
             </a>`
-          );
-          await this.getWorkflowStatuses(
-            3,
-            "main",
-            `.github/workflows/${workflow}.yml`
-          );
-        }),
+            );
+            await this.getWorkflowStatuses(
+              3,
+              "main",
+              `.github/workflows/${workflow}.yml`
+            );
+          }),
 
       octokit.pulls
         .list({
