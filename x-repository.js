@@ -156,12 +156,12 @@ class XRepository extends HTMLElement {
 
     this.el = Object.freeze({
       header: this.shadowRoot.querySelector("#header"),
-      version: this.shadowRoot.querySelector("#version"),
-      actions: this.shadowRoot.querySelector("#badge"),
-      pr: this.shadowRoot.querySelector("#pr"),
+      badge: this.shadowRoot.querySelector("#badge"),
       branches: this.shadowRoot.querySelector("#branches"),
       codespaces: this.shadowRoot.querySelector("#codespaces"),
       pages: this.shadowRoot.querySelector("#pages"),
+      pr: this.shadowRoot.querySelector("#pr"),
+      version: this.shadowRoot.querySelector("#version"),
     });
 
     // Problem: CORS
@@ -256,7 +256,7 @@ class XRepository extends HTMLElement {
 
     this.el.header.innerHTML = `<a class="card-link" href='https://github.com/${this.owner}/${this.prj}'>${this.prj}</a>`;
     this.el.version.innerHTML = "";
-    this.el.actions.innerHTML = "";
+    this.el.badge.innerHTML = "";
     this.el.pr.innerHTML = "";
     this.el.branches.innerHTML = "";
     this.el.codespaces.innerHTML = "";
@@ -266,7 +266,7 @@ class XRepository extends HTMLElement {
       (this.getAttribute("workflows") ?? "test")
         .split(",")
         .forEach(async (workflow) => {
-          this.el.actions.insertAdjacentHTML(
+          this.el.badge.insertAdjacentHTML(
             "beforeend",
             `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                 <img 
