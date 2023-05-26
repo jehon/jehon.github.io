@@ -340,7 +340,7 @@ class XRepository extends HTMLElement {
             .then((branches) =>
               branches.map((br) => {
                 // console.log(branches);
-                this.el.branches.innerHTML += `<div>${br}</div>`;
+                this.el.branches.innerHTML += `<div><a href='https://github.com/${this.owner}/${this.prj}/tree/${br}'>${br}</a></div>`;
               })
             )
         )
