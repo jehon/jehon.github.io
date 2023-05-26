@@ -123,6 +123,10 @@ class XRepository extends HTMLElement {
                 img {
                     height: 25px;
                 }
+
+                img[inline] {
+                  height: 1em;
+                }
                 
             </style>
             <div class="card">
@@ -340,7 +344,12 @@ class XRepository extends HTMLElement {
             .then((branches) =>
               branches.map((br) => {
                 // console.log(branches);
-                this.el.branches.innerHTML += `<div><a href='https://github.com/${this.owner}/${this.prj}/tree/${br}'>${br}</a></div>`;
+                this.el.branches.innerHTML += `<div>
+                  <a href='https://github.com/${this.owner}/${this.prj}/tree/${br}'>
+                    <img inline src='https://upload.wikimedia.org/wikipedia/commons/e/ed/Octicons-git-branch.svg'>
+                    ${br}
+                  </a>
+                </div>`;
               })
             )
         )
