@@ -271,7 +271,7 @@ class XRepository extends HTMLElement {
             `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                 <img 
                     src='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main&ts=${ts}' 
-                    onerror="this.style.display=none"
+                    onerror="this.style.display='none'"
                 >
             </a>`
           );
