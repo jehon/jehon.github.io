@@ -1,4 +1,3 @@
-
 //
 // https://docs.github.com/en/rest/reference/repos#statuses
 // https://serene-nightingale-a870d8.netlify.app/
@@ -275,51 +274,56 @@ class XRepository extends HTMLElement {
             </a>`
             );
             await this.getWorkflowStatuses(
-              await import("./x-github-auth.js"),
+              (
+                await import("./x-github-auth.js")
+              ).octokit,
               3,
               "main",
               `.github/workflows/${workflow}.yml`
             );
           }),
 
-      Promise.resolve().then(() => {
-        if (npm) {
-          return fetch(`https://registry.npmjs.org/${npm}`)
-            .then((response) => response.json())
-            .then(
-              (json) =>
-                (this.el.version.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
-            );
-        } else if (versionUrl) {
-          return fetch(versionUrl)
-            .then((response) => response.text())
-            .then(
-              (text) =>
-                (this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
-            );
-        }
-      })
-      .catch(() => true), // TODO: not clean
-  
-      import("./x-github-auth.js").then(
-        octokit =>
-          octokit.pulls
-            .list({
-              owner: this.owner,
-              repo: this.prj,
-            })
-            .then((result) => result.data)
-            .then((data) => {
-              data.map(async (pr) => {
-                // console.log(pr);
+      Promise.resolve()
+        .then(() => {
+          if (npm) {
+            return fetch(`https://registry.npmjs.org/${npm}`)
+              .then((response) => response.json())
+              .then(
+                (json) =>
+                  (this.el.version.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+              );
+          } else if (versionUrl) {
+            return fetch(versionUrl)
+              .then((response) => response.text())
+              .then(
+                (text) =>
+                  (this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
+              );
+          }
+        })
+        .catch(() => true), // TODO: not clean
 
-                this.el.pr.insertAdjacentHTML(
-                  "beforeend",
-                  `
+      import("./x-github-auth.js")
+        .then((x_github_auth) => x_github_auth.octokit)
+        .then(
+          (octokit) =>
+            octokit.pulls
+              .list({
+                owner: this.owner,
+                repo: this.prj,
+              })
+              .then((result) => result.data)
+              .then((data) => {
+                data.map(async (pr) => {
+                  // console.log(pr);
+
+                  this.el.pr.insertAdjacentHTML(
+                    "beforeend",
+                    `
                                     <div branch='${pr.branch}'>
                                         <a href='${pr.html_url ?? ""}'>PR: ${
-                    pr.user?.login ?? ""
-                  } - ${pr.title ?? ""}</a>
+                      pr.user?.login ?? ""
+                    } - ${pr.title ?? ""}</a>
                                         ${await this.getWorkflowStatuses(
                                           octokit,
                                           1,
@@ -327,49 +331,51 @@ class XRepository extends HTMLElement {
                                         )}
                                     </div>
                         `
-                );
-              });
-              if (data.length > 0) {
-                this.lightWarning(1, "pr");
-              }
-              return data;
-            })
-            .then((data) => data.map((pr) => pr.head.ref))
-            .then((branchesInPr) =>
-              octokit
-                .request("GET /repos/{owner}/{repo}/branches", {
-                  owner: this.owner,
-                  repo: this.prj,
-                })
-                .then((result) => result.data)
-                // .then(data => Array.isArray(data) ? data : [])
-                .then((data) => data.map((br) => br.name))
-                .then((branches) => {
-                  if (branches.includes("gh-pages")) {
-                    this.el.pages.removeAttribute("hidden");
-                  } else {
-                    this.el.pages.setAttribute("hidden", "hidden");
-                  }
-                  return branches;
-                })
-                .then((branches) =>
-                  branches.filter(
-                    (br) =>
-                      !branchesInPr.includes(br) && br != "main" && br != "gh-pages"
+                  );
+                });
+                if (data.length > 0) {
+                  this.lightWarning(1, "pr");
+                }
+                return data;
+              })
+              .then((data) => data.map((pr) => pr.head.ref))
+              .then((branchesInPr) =>
+                octokit
+                  .request("GET /repos/{owner}/{repo}/branches", {
+                    owner: this.owner,
+                    repo: this.prj,
+                  })
+                  .then((result) => result.data)
+                  // .then(data => Array.isArray(data) ? data : [])
+                  .then((data) => data.map((br) => br.name))
+                  .then((branches) => {
+                    if (branches.includes("gh-pages")) {
+                      this.el.pages.removeAttribute("hidden");
+                    } else {
+                      this.el.pages.setAttribute("hidden", "hidden");
+                    }
+                    return branches;
+                  })
+                  .then((branches) =>
+                    branches.filter(
+                      (br) =>
+                        !branchesInPr.includes(br) &&
+                        br != "main" &&
+                        br != "gh-pages"
+                    )
                   )
-                )
-                .then((branches) =>
-                  branches.map((br) => {
-                    // console.log(branches);
-                    this.el.branches.innerHTML += `<div>
+                  .then((branches) =>
+                    branches.map((br) => {
+                      // console.log(branches);
+                      this.el.branches.innerHTML += `<div>
                       <a href='https://github.com/${this.owner}/${this.prj}/tree/${br}'>
                         <img inline src='https://upload.wikimedia.org/wikipedia/commons/e/ed/Octicons-git-branch.svg'>
                         ${br}
                       </a>
                     </div>`;
-                  })
-                )
-            )
+                    })
+                  )
+              )
 
           // octokit.request("GET /repos/{owner}/{repo}/codespaces", {
           //     owner: this.owner,
@@ -399,7 +405,8 @@ class XRepository extends HTMLElement {
           //         //     })
           //         // }
           //     })
-      ).catch(() => true), // TODO: not clean
+        )
+        .catch(() => true), // TODO: not clean
     ]).then((data) => {
       this.removeAttribute("running");
       return data;

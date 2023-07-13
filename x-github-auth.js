@@ -1,4 +1,3 @@
-
 //
 // https://github.com/octokit/authentication-strategies.js/
 //  ==> token https://github.com/settings/tokens/new
@@ -65,3 +64,5 @@ export class XGithubAuth extends HTMLElement {
   }
 }
 customElements.define(XGithubAuth.tag, XGithubAuth);
+
+export default octokit;
