@@ -25,6 +25,9 @@ class XImg extends HTMLElement {
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-start;
+
+                    color: black;
+                    text-decoration: none;
                 }
 
                 a > img {
@@ -45,7 +48,7 @@ class XImg extends HTMLElement {
                     flex-shrink: 0;
 
                     text-align: center;
-                    font-size: 10px;
+                    font-size: 20px;
                 }
             </style>
             <a href='${link}'>
@@ -53,6 +56,8 @@ class XImg extends HTMLElement {
                 <legend>${legend}</legend>
             </a>
         `;
+
+        this.addEventListener
     }
 }
 
