@@ -22,12 +22,12 @@ function getToken() {
 //  ==> token https://github.com/settings/tokens/new
 //
 
-const ockokitAuthConfig = {
-  authStrategy: () => createTokenAuth(getToken()),
-};
-
-export default octokit = new Octokit({
-  ...(getToken() ? ockokitAuthConfig : {}),
+export const octokit = new Octokit({
+  ...(getToken()
+    ? {
+        authStrategy: () => createTokenAuth(getToken()),
+      }
+    : {}),
   userAgent: "jehon personal dashboard",
 });
 
