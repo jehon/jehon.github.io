@@ -1,5 +1,6 @@
 
 import "./x-img.js";
+import "./x-repository.js";
 
 const timestampEl = document.querySelector('#timestamp');
 const timeUTCEl = document.querySelector('#time');
@@ -29,6 +30,3 @@ document.querySelectorAll('[copy-to-clipboard]').forEach(e => e.addEventListener
     const txt = e.target.innerHTML;
     navigator.clipboard.writeText(txt);
 }));
-
-// Load last because it may fail
-import "./x-repository.js";

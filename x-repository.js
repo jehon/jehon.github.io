@@ -1,15 +1,9 @@
-import { octokit } from "./x-github-auth.js";
 
 //
 // https://docs.github.com/en/rest/reference/repos#statuses
 // https://serene-nightingale-a870d8.netlify.app/
 //
 // https://github.com/octokit/auth-app.js#usage-with-octokit
-//
-
-//
-// https://github.com/octokit/authentication-strategies.js/
-//  ==> token https://github.com/settings/tokens/new
 //
 
 class XRepository extends HTMLElement {
@@ -190,7 +184,7 @@ class XRepository extends HTMLElement {
     this.refreshData();
   }
 
-  async getWorkflowStatuses(n, branch, path = "") {
+  async getWorkflowStatuses(octokit, n, branch, path = "") {
     // https://docs.github.com/en/rest/actions/workflow-runs#list-workflow-runs-for-a-repository
     return (
       octokit
@@ -244,6 +238,8 @@ class XRepository extends HTMLElement {
   }
 
   async refreshData() {
+    const octokit = await import("./x-github-auth.js");
+
     if (this.hasAttribute("running")) {
       console.log("Already running", this.prj);
       return;
@@ -281,6 +277,7 @@ class XRepository extends HTMLElement {
             </a>`
             );
             await this.getWorkflowStatuses(
+              octokit,
               3,
               "main",
               `.github/workflows/${workflow}.yml`
@@ -305,6 +302,7 @@ class XRepository extends HTMLElement {
                 pr.user?.login ?? ""
               } - ${pr.title ?? ""}</a>
                                     ${await this.getWorkflowStatuses(
+                                      octokit,
                                       1,
                                       pr.head.ref
                                     )}

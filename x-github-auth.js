@@ -1,4 +1,9 @@
 
+//
+// https://github.com/octokit/authentication-strategies.js/
+//  ==> token https://github.com/settings/tokens/new
+//
+
 import { Octokit } from "https://cdn.skypack.dev/@octokit/rest";
 import { createTokenAuth } from "https://cdn.skypack.dev/@octokit/auth-token";
 import { throttling } from "https://cdn.skypack.dev/@octokit/plugin-throttling";
@@ -27,7 +32,7 @@ const ockokitAuthConfig = {
   //    auth: getToken()
 };
 
-export const octokit = new (Octokit.plugin(throttling).plugin(retry))({
+export default octokit = new (Octokit.plugin(throttling).plugin(retry))({
   ...(getToken() ? ockokitAuthConfig : {}),
   throttle: {
     onRateLimit: (retryAfter, options) => {
