@@ -6,8 +6,6 @@
 
 import { Octokit } from "https://esm.sh/@octokit/rest";
 import { createTokenAuth } from "https://esm.sh/@octokit/auth-token";
-// import { throttling } from "https://esm.sh/@octokit/plugin-throttling";
-// import { retry } from "https://esm.sh/@octokit/plugin-retry";
 
 const tokenHolder = "jhDevToken";
 
@@ -28,34 +26,8 @@ const ockokitAuthConfig = {
   authStrategy: () => createTokenAuth(getToken()),
 };
 
-// (Octokit.plugin(throttling).plugin(retry))
 export default octokit = new Octokit({
   ...(getToken() ? ockokitAuthConfig : {}),
-  // throttle: {
-  //   onRateLimit: (retryAfter, options) => {
-  //     octokit.log.warn(
-  //       `Request quota exhausted for request ${options.method} ${options.url}`
-  //     );
-
-  //     if (options.request.retryCount === 0) {
-  //       // only retries once
-  //       octokit.log.info(`Retrying after ${retryAfter} seconds!`);
-  //       return true;
-  //     }
-  //   },
-  //   onSecondaryRateLimit: (retryAfter, options) => {
-  //     // does not retry, only logs a warning
-  //     octokit.log.warn(
-  //       `Secondary rate limit detected for request ${options.method} ${options.url}`
-  //     );
-  //   },
-  //   onAbuseLimit: (retryAfter, options) => {
-  //     // does not retry, only logs a warning
-  //     octokit.log.warn(
-  //       `Abuse detected for request ${options.method} ${options.url}`
-  //     );
-  //   },
-  // },
   userAgent: "jehon personal dashboard",
 });
 
