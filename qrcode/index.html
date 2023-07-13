@@ -1,121 +1,135 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>QRCode facility</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <style>
-        legend {
-            width: 120px;
-            display: inline-block;
-        }
+      legend {
+        width: 120px;
+        display: inline-block;
+      }
     </style>
     <table>
-        <tr>
-            <td>
-                <canvas id="qr"></canvas>
-                <pre id="txt"></pre>
-            </td>
-            <td>
-                <form id="data">
-                    <legend>Nom</legend><input name="name"><br>
-                    <legend>Compte</legend><input name="account"><br>
-                    <legend>Montant</legend><input name="amount" type="number"><br>
-                    <legend>freeCom</legend><input name="freeCom"><br>
-                    <legend>structuredCom</legend><input name="structuredCom" pattern="[0-9]{3}/[0-9]{5}/[0-9]{4}"><br>
-                    <div id="digit"></div>
-                    <button id="generate">Generate</button>
-                </form>
-                <div id="ts"></div>
-            </td>
-        </tr>
+      <tr>
+        <td>
+          <canvas id="qr"></canvas>
+          <pre id="txt"></pre>
+        </td>
+        <td>
+          <form id="data">
+            <legend>Nom</legend>
+            <input name="name" /><br />
+            <legend>Compte</legend>
+            <input name="account" /><br />
+            <legend>Montant</legend>
+            <input name="amount" type="number" /><br />
+            <legend>freeCom</legend>
+            <input name="freeCom" /><br />
+            <legend>structuredCom</legend>
+            <input
+              name="structuredCom"
+              pattern="[0-9]{3}/[0-9]{5}/[0-9]{4}"
+            /><br />
+            <div id="digit"></div>
+            <button id="generate">Generate</button>
+          </form>
+          <div id="ts"></div>
+        </td>
+      </tr>
     </table>
 
     <div>
-        <button onclick="fill(' cocoricoop')">Cocoricoop</button>
+      <button onclick="fill(' cocoricoop')">Cocoricoop</button>
     </div>
 
     <script type="module">
-        import QRCode from 'https://cdn.skypack.dev/qrcode';
+      import QRCode from "https://esm.sh/qrcode";
 
-        const opts = {
-            cocoricoop: {
-                name: 'cocoricoop',
-                account: 'BE05103055843675',
-                structuredCom: '085/1927/54182'
-            },
-            KDM_France: {
-                name: 'KDM France',
-                account: 'FR7616807001380381902780674',
-                amount: '0',
-                unstructuredCom: 'solde'
-            }
+      const opts = {
+        cocoricoop: {
+          name: "cocoricoop",
+          account: "BE05103055843675",
+          structuredCom: "085/1927/54182",
+        },
+        KDM_France: {
+          name: "KDM France",
+          account: "FR7616807001380381902780674",
+          amount: "0",
+          unstructuredCom: "solde",
+        },
+      };
+
+      function generateQR() {
+        const data = {
+          name: "",
+          account: "",
+          amount: "",
+          freeCom: "",
+          structuredCom: "",
+          ...Object.fromEntries(
+            new FormData(document.querySelector("form#data")).entries()
+          ),
+        };
+        console.log("Generating to ", data);
+
+        if (data.structuredCom) {
+          const com = data.structuredCom.replaceAll("/", "");
+          const verif = Math.floor(com / 100); // enlève les 2 derniers chiffres = check digits
+          const digit = com % 100; // check digit entré par l'utilisateur
+          const check = 97 - (verif % 97);
+          console.log(check, digit);
+          document
+            .querySelectorAll("#digit")
+            .forEach(
+              (el) =>
+                (el.innerHTML = `Check digit: ${check} - received ${digit}`)
+            );
         }
 
-        function generateQR() {
-            const data = {
-                name: '',
-                account: '',
-                amount: '',
-                freeCom: '',
-                structuredCom: '',
-                ...Object.fromEntries((new FormData(document.querySelector('form#data'))).entries()),
-            };
-            console.log("Generating to ", data);
+        const str = [
+          "BCD", // Service tag (const)
+          "002", // Version
+          "1", // Encoding = UTF8
+          "SCT", // Identification code (const)
+          "", // BIC (opt)
+          data.name, // Name
+          data.account, // IBAN
+          data.amount ? "EUR" + data.amount : "", // (opt)
+          "", // Purpose (opt)
+          data.freeCom, // Unstructured com (opt)
+          data.structuredCom, // Structured com (opt)
+        ].join("\n");
 
-            if (data.structuredCom) {
-                const com = data.structuredCom.replaceAll('/', '');
-                const verif = Math.floor(com / 100);              // enlève les 2 derniers chiffres = check digits 
-                const digit = com % 100;                     // check digit entré par l'utilisateur 
-                const check = 97 - (verif % 97);
-                console.log(check, digit);
-                document.querySelectorAll('#digit').forEach(el => el.innerHTML = `Check digit: ${check} - received ${digit}`);
+        QRCode.toCanvas(document.getElementById("qr"), str, function (error) {
+          if (error) {
+            console.error(error);
+          }
+        });
+        document.querySelectorAll("#txt").forEach((el) => (el.innerHTML = str));
+        document
+          .querySelectorAll("#ts")
+          .forEach((el) => (el.innerHTML = new Date().getMilliseconds()));
+      }
 
-            }
-
-
-            const str = [
-                'BCD', // Service tag (const)
-                '002', // Version
-                "1", // Encoding = UTF8
-                'SCT', // Identification code (const)
-                '',  // BIC (opt)
-                data.name, // Name
-                data.account, // IBAN
-                data.amount ? 'EUR' + data.amount : '', // (opt)
-                '', // Purpose (opt)
-                data.freeCom, // Unstructured com (opt)
-                data.structuredCom // Structured com (opt)
-            ].join('\n');
-
-            QRCode.toCanvas(document.getElementById('qr'), str, function (error) {
-                if (error) {
-                    console.error(error)
-                }
-            });
-            document.querySelectorAll('#txt').forEach(el => el.innerHTML = str);
-            document.querySelectorAll('#ts').forEach(el => el.innerHTML = (new Date()).getMilliseconds());
+      function fill(name) {
+        const opt = opts[name];
+        Object.keys(opt).forEach(
+          (k) => (document.querySelector(`input[name="${k}"`).value = opt[k])
+        );
+        if (opts.struct) {
         }
+        generateQR();
+      }
+      window.fill = fill;
 
-        function fill(name) {
-            const opt = opts[name];
-            Object.keys(opt).forEach(
-                k => document.querySelector(`input[name="${k}"`).value = opt[k]
-            )
-            if (opts.struct) {
+      document
+        .querySelectorAll("input, button#generate")
+        .forEach((el) => el.addEventListener("change", () => generateQR()));
 
-            }
-            generateQR();
-        }
-        window.fill = fill;
-
-        document.querySelectorAll('input, button#generate').forEach(el => el.addEventListener('change', () => generateQR()));
-
-        fill('cocoricoop');
+      fill("cocoricoop");
     </script>
-</body>
-
+  </body>
 </html>
