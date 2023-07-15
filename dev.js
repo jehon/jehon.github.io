@@ -23,8 +23,8 @@ export async function refresh() {
     )
   );
 }
-
-document.refresh = refresh;
+// document.refresh = refresh;
+refresh();
 
 timestampEl.addEventListener("click", () => refresh());
 
