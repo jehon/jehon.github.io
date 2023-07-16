@@ -1,18 +1,17 @@
-
-import { inject } from './config.js'
+import { inject } from "./config.js";
 
 class XImg extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
 
-    connectedCallback() {
-        const link = inject(this.getAttribute('link'));
-        const img = this.getAttribute('src') ?? `${link}/icon.svg`;
-        const legend = this.getAttribute('legend') ?? link ?? img;
+  connectedCallback() {
+    const link = inject(this.getAttribute("link"));
+    const img = this.getAttribute("src") ?? `${link}/icon.svg`;
+    const legend = this.getAttribute("legend") ?? link ?? img;
 
-        this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
             <style>
                 :host() {
                     height: 100%;
@@ -56,9 +55,7 @@ class XImg extends HTMLElement {
                 <legend>${legend}</legend>
             </a>
         `;
-
-        this.addEventListener
-    }
+  }
 }
 
-customElements.define('x-img', XImg);
+customElements.define("x-img", XImg);

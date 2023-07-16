@@ -1,20 +1,20 @@
 {
-    "todo-tree.general.tags": [
-        "BUG",
-        "HACK",
-        "FIXME",
-        "TODO",
-        "XXX",
-        "xit",
-        "xdescribe",
-        "[ ]",
-        "[x]"
-    ],
-    "editor.formatOnSave": true,
-    "github-actions.workflows.pinned.workflows": [
-        ".github/workflows/test.yml",
-        "dynamic/pages/pages-build-deployment"
-    ],
-    "liveServer.settings.CustomBrowser": "firefox",
-    "liveServer.settings.fullReload": true
+  "todo-tree.general.tags": [
+    "BUG",
+    "HACK",
+    "FIXME",
+    "TODO",
+    "XXX",
+    "xit",
+    "xdescribe",
+    "[ ]",
+    "[x]"
+  ],
+  "editor.formatOnSave": true,
+  "github-actions.workflows.pinned.workflows": [
+    ".github/workflows/test.yml",
+    "dynamic/pages/pages-build-deployment"
+  ],
+  "liveServer.settings.CustomBrowser": "firefox",
+  "liveServer.settings.fullReload": true
 }

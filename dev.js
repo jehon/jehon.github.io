@@ -19,8 +19,8 @@ export async function refresh() {
 
   return Promise.all(
     Array.from(document.querySelectorAll("x-repository")).map((el) =>
-      el.refreshData()
-    )
+      el.refreshData(),
+    ),
   );
 }
 // document.refresh = refresh;
@@ -32,5 +32,5 @@ document.querySelectorAll("[copy-to-clipboard]").forEach((e) =>
   e.addEventListener("click", (e) => {
     const txt = e.target.innerHTML;
     navigator.clipboard.writeText(txt);
-  })
+  }),
 );

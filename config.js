@@ -5,8 +5,8 @@ try {
     config,
     await fetch("infrastructure/dev-config.json").then(
       (response) => response.json(),
-      () => null
-    )
+      () => null,
+    ),
   );
 } catch (_e) {
   // ok
@@ -31,5 +31,5 @@ const flattenConfig = flattenObj(config);
 export const inject = (string) =>
   string.replace(
     /\{\{([0-9a-zA-Z_.]+)\}\}/g,
-    (full, name) => flattenConfig[name] ?? ""
+    (full, name) => flattenConfig[name] ?? "",
   );

@@ -1,0 +1,26 @@
+{
+  "root": true,
+  "extends": ["eslint:recommended"],
+  "sourceType": "module",
+  "env": {
+    "es6": true,
+    "browser": true
+  },
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "local",
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error", "info", "assert"]
+      }
+    ],
+    "no-warning-comments": "off"
+  }
+}

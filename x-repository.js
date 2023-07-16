@@ -194,7 +194,7 @@ class XRepository extends HTMLElement {
             repo: this.prj,
             branch: branch,
             per_page: n,
-          }
+          },
         )
         .then((result) => result.data.workflow_runs)
         .then((runs) => (path ? runs.filter((run) => run.path == path) : runs))
@@ -206,7 +206,7 @@ class XRepository extends HTMLElement {
             results.reduceRight(
               (prev, current) =>
                 current == "canceled" ? prev : current == "failure",
-              false
+              false,
             )
           )
             this.lightWarning(branch == "main" ? 3 : 2, "runs");
@@ -230,7 +230,7 @@ class XRepository extends HTMLElement {
                 break;
             }
             return char;
-          })
+          }),
         )
         .then((chars) => chars.join(""))
     );
@@ -271,15 +271,13 @@ class XRepository extends HTMLElement {
                     src='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main&ts=${ts}' 
                     onerror="this.style.display='none'"
                 >
-            </a>`
+            </a>`,
             );
             await this.getWorkflowStatuses(
-              (
-                await import("./x-github-auth.js")
-              ).octokit,
+              (await import("./x-github-auth.js")).octokit,
               3,
               "main",
-              `.github/workflows/${workflow}.yml`
+              `.github/workflows/${workflow}.yml`,
             );
           }),
 
@@ -290,14 +288,14 @@ class XRepository extends HTMLElement {
               .then((response) => response.json())
               .then(
                 (json) =>
-                  (this.el.version.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`)
+                  (this.el.version.innerHTML = `<a class="btn btn-outline-info" href="https://www.npmjs.com/package/${npm}">version ${json["dist-tags"].latest}</a>`),
               );
           } else if (versionUrl) {
             return fetch(versionUrl)
               .then((response) => response.text())
               .then(
                 (text) =>
-                  (this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`)
+                  (this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`),
               );
           }
         })
@@ -322,15 +320,15 @@ class XRepository extends HTMLElement {
                     `
                                     <div branch='${pr.branch}'>
                                         <a href='${pr.html_url ?? ""}'>PR: ${
-                      pr.user?.login ?? ""
-                    } - ${pr.title ?? ""}</a>
+                                          pr.user?.login ?? ""
+                                        } - ${pr.title ?? ""}</a>
                                         ${await this.getWorkflowStatuses(
                                           octokit,
                                           1,
-                                          pr.head.ref
+                                          pr.head.ref,
                                         )}
                                     </div>
-                        `
+                        `,
                   );
                 });
                 if (data.length > 0) {
@@ -361,8 +359,8 @@ class XRepository extends HTMLElement {
                       (br) =>
                         !branchesInPr.includes(br) &&
                         br != "main" &&
-                        br != "gh-pages"
-                    )
+                        br != "gh-pages",
+                    ),
                   )
                   .then((branches) =>
                     branches.map((br) => {
@@ -373,9 +371,9 @@ class XRepository extends HTMLElement {
                         ${br}
                       </a>
                     </div>`;
-                    })
-                  )
-              )
+                    }),
+                  ),
+              ),
 
           // octokit.request("GET /repos/{owner}/{repo}/codespaces", {
           //     owner: this.owner,

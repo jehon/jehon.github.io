@@ -1,27 +1,26 @@
-
 on:
   push:
     branches:
-    - main
-    - ci/**
+      - main
+      - ci/**
   pull_request:
     branches:
-    - main
+      - main
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
-  
+    - cron: "0 0 * * *"
+
 jobs:
   ga-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - uses: devcontainers/ci@v0.3
-      with:
-        runCmd: npm ci
-    
-    - uses: devcontainers/ci@v0.3
-      with:
-        runCmd: npm test
+      - uses: devcontainers/ci@v0.3
+        with:
+          runCmd: npm ci
+
+      - uses: devcontainers/ci@v0.3
+        with:
+          runCmd: npm test

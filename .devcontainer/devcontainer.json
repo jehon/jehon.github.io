@@ -1,20 +1,20 @@
 {
-	"name": "Node.js",
-	"image": "node:lts",
-	"features": {},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ritwickdey.liveserver",
-				"dbaeumer.vscode-eslint",
-				"ecmel.vscode-html-css",
-				"gruntfuggly.todo-tree",
-				"mkaufman.htmlhint",
-				"meganrogge.template-string-converter",
-				"cschleiden.vscode-github-actions",
-				"ritwickdey.LiveServer"
-			],
-			"postCreateCommand": "npm ci"
-		}
-	}
+  "name": "Node.js",
+  "image": "node:lts",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ritwickdey.liveserver",
+        "dbaeumer.vscode-eslint",
+        "ecmel.vscode-html-css",
+        "gruntfuggly.todo-tree",
+        "mkaufman.htmlhint",
+        "meganrogge.template-string-converter",
+        "cschleiden.vscode-github-actions",
+        "ritwickdey.LiveServer"
+      ],
+      "postCreateCommand": "npm ci"
+    }
+  }
 }

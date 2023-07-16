@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -70,7 +70,7 @@
           freeCom: "",
           structuredCom: "",
           ...Object.fromEntries(
-            new FormData(document.querySelector("form#data")).entries()
+            new FormData(document.querySelector("form#data")).entries(),
           ),
         };
         console.log("Generating to ", data);
@@ -85,7 +85,7 @@
             .querySelectorAll("#digit")
             .forEach(
               (el) =>
-                (el.innerHTML = `Check digit: ${check} - received ${digit}`)
+                (el.innerHTML = `Check digit: ${check} - received ${digit}`),
             );
         }
 
@@ -117,7 +117,7 @@
       function fill(name) {
         const opt = opts[name];
         Object.keys(opt).forEach(
-          (k) => (document.querySelector(`input[name="${k}"`).value = opt[k])
+          (k) => (document.querySelector(`input[name="${k}"`).value = opt[k]),
         );
         if (opts.struct) {
         }

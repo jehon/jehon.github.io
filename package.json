@@ -15,11 +15,12 @@
   "homepage": "https://github.com/jehon/jehon.github.io#readme",
   "devDependencies": {
     "eslint": "8.45.0",
-    "htmlhint": "1.1.4"
+    "htmlhint": "1.1.4",
+    "prettier": "3.0.0"
   },
   "scripts": {
     "start": "echo 'Use Live HTTP Server extension'",
-    "lint": "eslint && htmlhint",
+    "lint": "eslint && htmlhint && ./node_modules/.bin/prettier --check .",
     "test": "eslint && htmlhint"
   }
 }
