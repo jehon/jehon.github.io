@@ -49,7 +49,7 @@ export class XGithubAuth extends HTMLElement {
                 </style>
                 <div>Please go to <a href='https://github.com/settings/tokens/new'>GITHUB</a> to create a token</div>
                 <div>
-                    <input name='token'>
+                    <input name='token' type='password'>
                 </div>
             `;
       const input = this.shadowRoot.querySelector("[name=token]");
