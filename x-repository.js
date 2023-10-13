@@ -295,6 +295,7 @@ class XRepository extends HTMLElement {
               .then((response) => response.text())
               .then(txt => {
                 try {
+                  console.log({txt});
                   const d = new Date(...txt.split(":").split(" ").split(":"));
                   console.log({ d });
                   const diffHours = Math.floor((new Date() - d) / 1000 / 60 / 60);
