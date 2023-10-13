@@ -33,3 +33,17 @@ export const inject = (string) =>
     /\{\{([0-9a-zA-Z_.]+)\}\}/g,
     (full, name) => flattenConfig[name] ?? "",
   );
+
+export function versionAgo(txt) {
+  try {
+    const args = txt.split(/[: .-]/, 6)
+      // Fix the month:  
+      .map((v, i) => parseInt(v) + (i == 1 ? -1 : 0));
+
+    const d = Date.UTC(...args);
+    const diffHours = Math.floor((new Date() - d) / 1000 / 60 / 60);
+    return txt + "(" + diffHours + ")"
+  } catch (_e) {
+    console.error(_e);
+  };
+}

@@ -5,6 +5,8 @@
 // https://github.com/octokit/auth-app.js#usage-with-octokit
 //
 
+import { versionAgo } from "./config.js";
+
 class XRepository extends HTMLElement {
   static get tag() {
     return "x-repository";
@@ -293,19 +295,7 @@ class XRepository extends HTMLElement {
           } else if (versionUrl) {
             return fetch(versionUrl)
               .then((response) => response.text())
-              .then(txt => {
-                try {
-                  console.log({txt});
-                  const d = new Date(...txt.split(":").split(" ").split(":"));
-                  console.log({ d });
-                  const diffHours = Math.floor((new Date() - d) / 1000 / 60 / 60);
-                  console.log({ d, diffHours });
-                  txt = txt + "(" + diffHours + ")"
-                } catch (_e) {
-                  console.error(e);
-                };
-                return txt;
-              })
+              .then(txt => versionAgo(txt))
               .then(
                 (text) =>
                   (this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`),
