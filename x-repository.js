@@ -261,25 +261,25 @@ class XRepository extends HTMLElement {
     this.workflows = {};
     return Promise.all([
       this.hasAttribute("no-badge") ||
-        (this.getAttribute("workflows") ?? "test")
-          .split(",")
-          .forEach(async (workflow) => {
-            this.el.badge.insertAdjacentHTML(
-              "beforeend",
-              `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
+      (this.getAttribute("workflows") ?? "test")
+        .split(",")
+        .forEach(async (workflow) => {
+          this.el.badge.insertAdjacentHTML(
+            "beforeend",
+            `<a id=${workflow} href='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml'>
                 <img 
                     src='https://github.com/${this.owner}/${this.prj}/actions/workflows/${workflow}.yml/badge.svg?branch=main&ts=${ts}' 
                     onerror="this.style.display='none'"
                 >
             </a>`,
-            );
-            await this.getWorkflowStatuses(
-              (await import("./x-github-auth.js")).octokit,
-              3,
-              "main",
-              `.github/workflows/${workflow}.yml`,
-            );
-          }),
+          );
+          await this.getWorkflowStatuses(
+            (await import("./x-github-auth.js")).octokit,
+            3,
+            "main",
+            `.github/workflows/${workflow}.yml`,
+          );
+        }),
 
       Promise.resolve()
         .then(() => {
@@ -293,6 +293,14 @@ class XRepository extends HTMLElement {
           } else if (versionUrl) {
             return fetch(versionUrl)
               .then((response) => response.text())
+              .then(txt => {
+                try {
+                  const d = new Date(...txt.split(":").split(" ").split(":"));
+                  const diffHours = Math.floor((new Date() - d) / 1000 / 60 / 60);
+                  txt = txt + "(" + diffHours + ")"
+                } catch (_e) {};
+                return txt;
+              })
               .then(
                 (text) =>
                   (this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`),
@@ -319,14 +327,13 @@ class XRepository extends HTMLElement {
                     "beforeend",
                     `
                                     <div branch='${pr.branch}'>
-                                        <a href='${pr.html_url ?? ""}'>PR: ${
-                                          pr.user?.login ?? ""
-                                        } - ${pr.title ?? ""}</a>
+                                        <a href='${pr.html_url ?? ""}'>PR: ${pr.user?.login ?? ""
+                    } - ${pr.title ?? ""}</a>
                                         ${await this.getWorkflowStatuses(
-                                          octokit,
-                                          1,
-                                          pr.head.ref,
-                                        )}
+                      octokit,
+                      1,
+                      pr.head.ref,
+                    )}
                                     </div>
                         `,
                   );
