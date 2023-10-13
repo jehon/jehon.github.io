@@ -42,8 +42,9 @@ export function versionAgo(txt) {
 
     const d = Date.UTC(...args);
     const diffHours = Math.floor((new Date() - d) / 1000 / 60 / 60);
-    return txt + "(" + diffHours + ")"
+    return txt + " (" + diffHours + ")"
   } catch (_e) {
     console.error(_e);
+    return txt;
   };
 }

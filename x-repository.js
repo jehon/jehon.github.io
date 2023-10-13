@@ -295,7 +295,7 @@ class XRepository extends HTMLElement {
           } else if (versionUrl) {
             return fetch(versionUrl)
               .then((response) => response.text())
-              .then(txt => versionAgo(txt))
+              .then(text => versionAgo(text))
               .then(
                 (text) =>
                   (this.el.version.innerHTML = `<span class="btn btn-outline-info" >version ${text}</span>`),
