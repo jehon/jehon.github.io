@@ -23,3 +23,7 @@ class CI extends HTMLElement {
 }
 
 customElements.define(CI.tag, CI);
+
+document
+  .querySelector("#reload")
+  .addEventListener("click", () => location.reload());
