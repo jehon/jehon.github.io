@@ -1,20 +1,9 @@
 {
-  "todo-tree.general.tags": [
-    "BUG",
-    "HACK",
-    "FIXME",
-    "TODO",
-    "XXX",
-    "xit",
-    "xdescribe",
-    "[ ]",
-    "[x]"
-  ],
-  "editor.formatOnSave": true,
-  "github-actions.workflows.pinned.workflows": [
-    ".github/workflows/test.yml",
-    "dynamic/pages/pages-build-deployment"
-  ],
-  "liveServer.settings.CustomBrowser": "firefox",
-  "liveServer.settings.fullReload": true
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "always",
+        "source.organizeImports": "always"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+
 }
