@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Professional Dev center</title>
+    <link rel="icon" type="image/png" href="/favicon.svg" />
+    <link rel="stylesheet" href="ci.css" />
+    <script src="ci.js" type="module"></script>
+  </head>
+
+  <body>
+    <!-- https://docs.gitlab.com/ee/user/project/badges.html -->
+    <!-- https://gitlab.redange.fr-team.lu/focus/cms2/-/settings/ci_cd -->
+
+    <h2>CMS 2</h2>
+    <div id="grid">
+      <div style="grid-row: header; grid-column: project">Project</div>
+      <div style="grid-row: header; grid-column: develop">Develop</div>
+      <div style="grid-row: header; grid-column: release">Release</div>
+      <div style="grid-row: header; grid-column: main">Main</div>
+      <div style="grid-row: header; grid-column: master">Master</div>
+      <div style="grid-row: header; grid-column: staging">Staging</div>
+      <div style="grid-row: header; grid-column: preprod">PreProd</div>
+      <div style="grid-row: header; grid-column: prod">Prod</div>
+
+      <div style="grid-row: focus_devops_db-copy; grid-column: project">
+        devops/db-copy
+      </div>
+      <x-ci project="focus/devops/db-copy" branch="master"></x-ci>
+
+      <div style="grid-row: focus_devops_ci; grid-column: project">
+        devops/ci
+      </div>
+      <x-ci project="focus/devops/ci" branch="master"></x-ci>
+
+      <div style="grid-row: tools_web-cicd; grid-column: project">
+        tools/web-cicd
+      </div>
+      <x-ci project="tools/web-cicd" branch="master"></x-ci>
+
+      <div style="grid-row: focus_db-manager; grid-column: project">
+        db-manager
+      </div>
+      <x-ci project="focus/db-manager" branch="master"></x-ci>
+
+      <div style="grid-row: focus_cms2; grid-column: project">cms2</div>
+      <x-ci project="focus/cms2" branch="master"></x-ci>
+      <x-ci project="focus/cms2" branch="staging"></x-ci>
+      <x-ci project="focus/cms2" branch="preprod"></x-ci>
+      <x-ci project="focus/cms2" branch="prod"></x-ci>
+    </div>
+  </body>
+</html>
