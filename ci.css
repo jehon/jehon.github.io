@@ -17,12 +17,7 @@
     [preprod] 1fr
     [prod];
 
-  grid-template-rows:
-    [header] 1fr
-    [focus_devops_db-copy] 1fr
-    [tools_web-cicd] 1fr
-    [focus_db-manager] 1fr
-    [focus_cms2] 1fr;
+  grid-template-rows: [header] 1f;
 
   :nth-child(-n + 8) {
     font-weight: bold;

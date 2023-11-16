@@ -1,13 +1,16 @@
-class CI extends HTMLElement {
+function project2row(project) {
+  return project.replaceAll("/", "_");
+}
+
+class CIBranch extends HTMLElement {
   static get tag() {
-    return "x-ci";
+    return "x-ci-branch";
   }
 
   connectedCallback() {
     const project = this.getAttribute("project");
     const branch = this.getAttribute("branch");
 
-    this.style.gridRow = project.replaceAll("/", "_");
     this.style.gridColumn = branch;
 
     this.innerHTML = `
@@ -21,9 +24,29 @@ class CI extends HTMLElement {
         </a>`;
   }
 }
-
-customElements.define(CI.tag, CI);
+customElements.define(CIBranch.tag, CIBranch);
 
 document
   .querySelector("#reload")
   .addEventListener("click", () => location.reload());
+
+const grid = document.querySelector("#grid");
+
+function addProject(project, branches) {
+  grid.insertAdjacentHTML(
+    "beforeend",
+    `<div style='grid-column: project'>
+        ${project}
+      </div>
+      ${branches
+        .map(
+          (branch) =>
+            `<x-ci-branch project="${project}" branch="${branch}"></x-ci-branch>`
+        )
+        .join("")}`
+  );
+}
+
+addProject("focus/devops/db-copy", ["master"]);
+addProject("tools/web-cicd", ["master"]);
+addProject("focus/cms2", ["master", "staging", "preprod", "prod"]);

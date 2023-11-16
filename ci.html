@@ -11,36 +11,14 @@
     <!-- https://docs.gitlab.com/ee/user/project/badges.html -->
     <!-- https://gitlab.redange.fr-team.lu/focus/cms2/-/settings/ci_cd -->
     <div id="grid">
-      <div style="grid-row: header; grid-column: project" id="reload">
-        Project ↻
-      </div>
-      <div style="grid-row: header; grid-column: develop">Develop</div>
-      <div style="grid-row: header; grid-column: release">Release</div>
-      <div style="grid-row: header; grid-column: main">Main</div>
-      <div style="grid-row: header; grid-column: master">Master</div>
-      <div style="grid-row: header; grid-column: staging">Staging</div>
-      <div style="grid-row: header; grid-column: preprod">PreProd</div>
-      <div style="grid-row: header; grid-column: prod">Prod</div>
-
-      <div style="grid-row: focus_devops_db-copy; grid-column: project">
-        devops/db-copy
-      </div>
-      <x-ci project="focus/devops/db-copy" branch="master"></x-ci>
-
-      <div style="grid-row: tools_web-cicd; grid-column: project">
-        tools/web-cicd
-      </div>
-      <x-ci project="tools/web-cicd" branch="master"></x-ci>
-
-      <div style="grid-row: focus_db-manager; grid-column: project">
-        db-manager
-      </div>
-
-      <div style="grid-row: focus_cms2; grid-column: project">cms2</div>
-      <x-ci project="focus/cms2" branch="master"></x-ci>
-      <x-ci project="focus/cms2" branch="staging"></x-ci>
-      <x-ci project="focus/cms2" branch="preprod"></x-ci>
-      <x-ci project="focus/cms2" branch="prod"></x-ci>
+      <div style="grid-column: project" id="reload">Project ↻</div>
+      <div style="grid-column: develop">Develop</div>
+      <div style="grid-column: release">Release</div>
+      <div style="grid-column: main">Main</div>
+      <div style="grid-column: master">Master</div>
+      <div style="grid-column: staging">Staging</div>
+      <div style="grid-column: preprod">PreProd</div>
+      <div style="grid-column: prod">Prod</div>
     </div>
   </body>
 </html>
