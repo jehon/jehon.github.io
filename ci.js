@@ -49,4 +49,4 @@ function addProject(project, branches) {
 
 addProject("focus/devops/db-copy", ["master"]);
 addProject("tools/web-cicd", ["master"]);
-addProject("focus/cms2", ["master", "staging", "preprod", "prod"]);
+addProject("focus/cms2", ["develop", "main"]);

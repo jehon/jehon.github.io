@@ -10,16 +10,13 @@
   grid-template-columns:
     [project] 1fr
     [develop] 1fr
-    [release] 1fr
     [main] 1fr
     [master] 1fr
-    [staging] 1fr
-    [preprod] 1fr
-    [prod];
+    [staging] 1fr;
 
   grid-template-rows: [header] 1f;
 
-  :nth-child(-n + 8) {
+  :nth-child(-n + 5) {
     font-weight: bold;
   }
 
