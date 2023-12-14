@@ -48,5 +48,8 @@ function addProject(project, branches) {
 }
 
 addProject("focus/devops/db-copy", ["master"]);
+addProject("focus/frontend/cms2", ["develop", "main"]);
+addProject("focus/frontend/db-manager", ["develop", "master"]);
+addProject("olsx/web", ["master"]);
 addProject("tools/web-cicd", ["master"]);
-addProject("focus/cms2", ["develop", "main"]);
+addProject("focus/devops/swarm-config", ["master"]);
