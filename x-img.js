@@ -13,25 +13,35 @@ class XImg extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
             <style>
-                :host() {
+                :host(*) {
                     height: 100%;
-                    display: block;
-
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-start;
 
+                    border: black solid 1px;
+
                     color: black;
                     text-decoration: none;
+
+                    cursor: pointer;
                 }
 
-                * {
-                    width: 100%;
+                img {
                     flex-grow: 1;
+                    flex-shrink: 1;
                     flex-basis: 10px;
 
+                    max-width: 100%;
                     max-height: 100%;
+                    min-height: 1px;
+
                     object-fit: contain;
+                }
+
+                legend {
+                    max-width: 100%;
+                    max-height: 100%;
 
                     text-align: center;
                     font-size: 20px;
