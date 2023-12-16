@@ -28,5 +28,10 @@
   flex-shrink: 0;
   flex-basis: 200px;
 
-  margin: 10px;
+  height: 100%;
+  padding: 10px;
+
+  box-sizing: border-box;
+
+  object-fit: contain;
 }
