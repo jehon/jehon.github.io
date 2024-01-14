@@ -16,7 +16,7 @@
   "devDependencies": {
     "eslint": "8.56.0",
     "htmlhint": "1.1.4",
-    "prettier": "3.2.1"
+    "prettier": "3.2.2"
   },
   "scripts": {
     "start": "echo 'Use Live HTTP Server extension'",
