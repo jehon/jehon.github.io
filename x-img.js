@@ -13,7 +13,7 @@ class XImg extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
             <style>
-                :host(*) {
+                :host(*), a {
                     height: 100%;
                     display: flex;
                     flex-direction: column;
@@ -47,12 +47,11 @@ class XImg extends HTMLElement {
                     font-size: 20px;
                 }
             </style>
-            <img src='${img}'>
-            <legend>${legend}</legend>
+            <a href="${link}">
+              <img src='${img}'>
+              <legend>${legend}</legend>
+            </a>
         `;
-    this.addEventListener('click', () => { 
-        window.location = link; 
-    });
   }
 }
 
